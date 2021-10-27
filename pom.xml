@@ -14,6 +14,7 @@
         <module>coin-member</module>
         <module>coin-finance</module>
         <module>coin-chan</module>
+        <module>coin-task</module>
 
     </modules>
 
