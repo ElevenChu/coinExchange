@@ -17,6 +17,7 @@
         <module>coin-task</module>
         <module>coin-statistics</module>
         <module>match-engine</module>
+        <module>exchange-engine</module>
 
     </modules>
 
