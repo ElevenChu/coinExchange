@@ -11,5 +11,11 @@
 
     <artifactId>match-service</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>com.elevenchu</groupId>
+            <artifactId>match-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>

@@ -12,7 +12,7 @@
     <artifactId>coin-statistics</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>statustucs-service</module>
+        <module>statistics-service</module>
         <module>statistic-api</module>
     </modules>
 
