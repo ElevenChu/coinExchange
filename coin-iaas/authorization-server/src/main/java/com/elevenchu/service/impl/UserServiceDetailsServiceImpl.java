@@ -19,10 +19,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,7 +61,29 @@ public class UserServiceDetailsServiceImpl implements UserDetailsService {
      */
 
     private UserDetails loadMemberUserByUsername(String username) {
-    return null;
+    return jdbcTemplate.queryForObject(LoginConstant.QUERY_MEMBER_SQL, new RowMapper<UserDetails>() {
+        @Override
+        public UserDetails mapRow(ResultSet resultSet, int i) throws SQLException {
+           if(resultSet.wasNull()){
+               throw new UsernameNotFoundException("用户名"+username+"不存在");
+           }
+            long id = resultSet.getLong("id");
+            String password = resultSet.getString("password");
+            int status = resultSet.getInt("status");
+
+
+
+            return new User(
+                    String.valueOf(id),
+                    password,
+                    status==1,
+                    true,
+                    true,
+                    true,
+                    Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"))
+            );
+        }
+    },username,username);
     }
 
 
@@ -112,7 +131,7 @@ public class UserServiceDetailsServiceImpl implements UserDetailsService {
      * @return
      */
     private Collection<? extends GrantedAuthority> getSysUserPermission(long id) {
-        String roleCode = jdbcTemplate.queryForObject(LoginConstant.QUERY_ROLE_CODE_SQL, String.class);
+        String roleCode = jdbcTemplate.queryForObject(LoginConstant.QUERY_ROLE_CODE_SQL, String.class,id);
         List<String> permissions=null;//权限的名称
         //1.当用户为超级管理员时，拥有所有权限
       if(LoginConstant.ADMIN_ROLE_CODE.equals(roleCode)){
@@ -120,7 +139,7 @@ public class UserServiceDetailsServiceImpl implements UserDetailsService {
 
       }else{
           //2.普通用户，需要使用角色->权限数据
-         permissions = jdbcTemplate.queryForList(LoginConstant.QUERY_PERMISSION_SQL, String.class);
+         permissions = jdbcTemplate.queryForList(LoginConstant.QUERY_PERMISSION_SQL, String.class,id);
 
       }
       if (permissions==null||permissions.isEmpty()){
