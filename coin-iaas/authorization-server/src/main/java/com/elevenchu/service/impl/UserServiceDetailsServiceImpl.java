@@ -30,12 +30,17 @@ public class UserServiceDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         String loginType = requestAttributes.getRequest().getParameter("login_type");//区分是后台管理人员还是普通用户
+
         if(StringUtils.isEmpty(loginType)){
             throw new AuthenticationServiceException("登录类型不能为null");
 
         }
         UserDetails userDetails=null;
        try {
+           String grantType = requestAttributes.getRequest().getParameter("grant_type");
+           if(LoginConstant.REFRESH_TYPE.equals(grantType)){
+               username=adjustUsername(username,loginType);
+           }
            switch (loginType) {
                case LoginConstant.ADMIN_TYPE:
                    userDetails =loadSysUserByUsername(username);
@@ -52,6 +57,23 @@ public class UserServiceDetailsServiceImpl implements UserDetailsService {
        }
 
         return  userDetails;
+    }
+
+    /**
+     * 纠正用户的名称
+     * @param username 用户的id
+     * @param loginType admin_type or member_type
+     * @return
+     */
+    private String adjustUsername(String username, String loginType) {
+    if (LoginConstant.ADMIN_TYPE.equals(loginType)){
+        return jdbcTemplate.queryForObject(LoginConstant.QUERY_ADMIN_USER_WITH_ID,String.class,username);
+    }
+    if (LoginConstant.MEMEBER_TYPE.equals(loginType)){
+        return jdbcTemplate.queryForObject(LoginConstant.QUERY_MEMBER_USER_WITH_ID,String.class,username);
+    }
+    return  username;
+
     }
 
     /**
