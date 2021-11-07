@@ -19,6 +19,7 @@
     <dependency>
         <groupId>com.elevenchu</groupId>
         <artifactId>coin-common</artifactId>
+        <version>1.0-SNAPSHOT</version>
     </dependency>
 </dependencies>
     <build>
