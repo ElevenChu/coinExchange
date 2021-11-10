@@ -1,0 +1,17 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: coin-exchange
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos-server:8848
+      config:
+        enabled: false
+  swagger2:
+    basePackage: com.elevenchu.controller
+    name: elevenchu
+    url: https://github.com/elevenchu
+    title: con-common测试
+    description:
