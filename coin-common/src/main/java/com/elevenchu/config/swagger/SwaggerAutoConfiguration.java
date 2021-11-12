@@ -1,7 +1,5 @@
 package com.elevenchu.config.swagger;
 
-import org.checkerframework.checker.units.qual.A;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +12,6 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +41,8 @@ public class SwaggerAutoConfiguration {
     }
 
     /**
-     * Api信息的简介
+     * api 信息的简介
+     *
      * @return
      */
     private ApiInfo apiInfo() {
@@ -60,7 +58,17 @@ public class SwaggerAutoConfiguration {
     }
 
     /**
-     * 安全的上下文
+     * 安全的规则配置
+     *
+     * @return
+     */
+    private List<SecurityScheme> securitySchemes() {
+        return Arrays.asList(new ApiKey("Authorization", "Authorization", "Authorization"));
+    }
+
+    /**
+     * 安全的上下问
+     *
      * @return
      */
     private List<SecurityContext> securityContexts() {
@@ -68,14 +76,6 @@ public class SwaggerAutoConfiguration {
                 Arrays.asList(new SecurityReference("Authorization", new AuthorizationScope[]{new AuthorizationScope("global", "accessResource")})),
                 PathSelectors.any()
         ));
-    }
-
-    /**
-     * 安全规则的配置
-     * @return
-     */
-    private List<SecurityScheme> securitySchemes() {
-        return  Arrays.asList(new ApiKey("Authorization", "Authorization", "Authorization"));
     }
 
 
