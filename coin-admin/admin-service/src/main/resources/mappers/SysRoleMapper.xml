@@ -18,4 +18,10 @@
     <!--@mbg.generated-->
     id, `name`, code, description, create_by, modify_by, `status`, created, last_update_time
   </sql>
+
+  <select id="getUserRoleCode" resultType="java.lang.String">
+    select r.`code` from  sys_role as r  left join  sys_user_role as ur on r.id=ur.role_id
+    where ur.user_id=#{userId}
+
+    </select>
 </mapper>

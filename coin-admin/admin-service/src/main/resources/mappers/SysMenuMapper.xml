@@ -23,4 +23,26 @@
     id, parent_id, parent_key, `type`, `name`, `desc`, target_url, sort, `status`, create_by, 
     modify_by, created, last_update_time
   </sql>
+
+  <select id="selectMenusByUserId" resultMap="BaseResultMap">
+    SELECT
+    m.id,
+    m.parent_id,
+    m.parent_key,
+    m.`type`,
+    m.`name`,
+    m.`desc`,
+    m.target_url,
+    m.sort,
+    m.`status`,
+    m.create_by,
+    m.modify_by,
+    m.created,
+    m.last_update_time
+    FROM sys_menu as m
+    LEFT JOIN sys_role_menu AS rm ON rm.menu_id = m.id
+    LEFT JOIN sys_user_role AS ur ON ur.role_id = rm.role_id
+    WHERE
+    ur.user_id = #{userId}
+  </select>
 </mapper>
