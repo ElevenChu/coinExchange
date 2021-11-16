@@ -11,10 +11,11 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.util.Arrays;
 
 @RestController
 @Api(tags = "角色管理")
@@ -38,8 +39,36 @@ public class SysRoleController {
         return R.ok(sysRoleService.findByPage(page, name));
     }
 
+    @PostMapping
+    @ApiOperation("新增一个角色")
+    @PreAuthorize("hasAuthority('sys_role_create')")
+    public R add(@RequestBody @Validated SysRole sysRole){
+        boolean save = sysRoleService.save(sysRole);
+        if(save){
+            return R.ok();
+        }
+        return R.fail("新增失败");
+    }
+
+    @PostMapping("/delete")
+    @ApiOperation("删除一个角色数据")
+    @PreAuthorize("hasAuthority('sys_role_delete')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value="要删除的包含角色的数组")
+    })
+    public R delete(@RequestBody String[] ids){
+        if(ids==null||ids.length==0){
+            return R.fail("要删除的数据不能为NULL");
+
+        }
+        boolean b = sysRoleService.removeByIds(Arrays.asList(ids));
+        if(b){
+            return R.ok();
+        }
+        return R.fail("删除失败");
 
 
+    }
 
 
 
