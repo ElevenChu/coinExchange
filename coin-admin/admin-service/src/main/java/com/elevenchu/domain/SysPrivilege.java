@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 /**
     * 权限配置
     */
@@ -32,6 +34,7 @@ public class SysPrivilege {
      */
     @TableField(value = "menu_id")
     @ApiModelProperty(value="所属菜单Id")
+    @NotNull
     private Long menuId;
 
     /**
@@ -39,6 +42,7 @@ public class SysPrivilege {
      */
     @TableField(value = "`name`")
     @ApiModelProperty(value="功能点名称")
+    @NotNull
     private String name;
 
     /**
