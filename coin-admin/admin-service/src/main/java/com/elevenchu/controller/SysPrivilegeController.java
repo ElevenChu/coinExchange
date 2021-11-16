@@ -64,11 +64,11 @@ public class SysPrivilegeController {
             @ApiImplicitParam(name = "sysPrivilege" ,value = "sysPrivilege 的json数据")
     })
     public R add(@RequestBody @Validated SysPrivilege sysPrivilege){
-        // 新增时，我们需要给我们的新增对象填充一些属性
-        String userIdStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        sysPrivilege.setCreateBy(Long.valueOf(userIdStr));
-        sysPrivilege.setCreated(new Date());
-        sysPrivilege.setLastUpdateTime(new Date());
+//        // 新增时，我们需要给我们的新增对象填充一些属性
+//        String userIdStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+//        sysPrivilege.setCreateBy(Long.valueOf(userIdStr));
+//        sysPrivilege.setCreated(new Date());
+//        sysPrivilege.setLastUpdateTime(new Date());
 
         boolean save = sysPrivilegeService.save(sysPrivilege);
         if(save){
@@ -84,10 +84,10 @@ public class SysPrivilegeController {
             @ApiImplicitParam(name = "sysPrivilege" ,value = "sysPrivilege 的json数据")
     })
     public R update(@RequestBody @Validated SysPrivilege sysPrivilege){
-        // 新增时，我们需要给我们的新增对象填充一些属性
-        String userIdStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        sysPrivilege.setModifyBy(Long.valueOf(userIdStr));
-        sysPrivilege.setLastUpdateTime(new Date());
+//        // 新增时，我们需要给我们的新增对象填充一些属性
+//        String userIdStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+//        sysPrivilege.setModifyBy(Long.valueOf(userIdStr));
+//        sysPrivilege.setLastUpdateTime(new Date());
 
         boolean save = sysPrivilegeService.updateById(sysPrivilege);
         if(save){

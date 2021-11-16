@@ -1,9 +1,6 @@
 package com.elevenchu.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
@@ -25,7 +22,7 @@ public class SysPrivilege {
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.INPUT)
+    @TableId(value = "id", type = IdType.AUTO)
     @ApiModelProperty(value="主键")
     private Long id;
 
@@ -40,7 +37,7 @@ public class SysPrivilege {
     /**
      * 功能点名称
      */
-    @TableField(value = "`name`")
+    @TableField(value = "name")
     @ApiModelProperty(value="功能点名称")
     @NotNull
     private String name;
@@ -56,35 +53,42 @@ public class SysPrivilege {
     @ApiModelProperty(value="")
     private String url;
 
-    @TableField(value = "`method`")
+    @TableField(value = "method")
     @ApiModelProperty(value="")
     private String method;
 
     /**
      * 创建人
      */
-    @TableField(value = "create_by")
+    @TableField(value = "create_by",fill=FieldFill.INSERT)
     @ApiModelProperty(value="创建人")
     private Long createBy;
 
     /**
      * 修改人
      */
-    @TableField(value = "modify_by")
+    @TableField(value = "modify_by",fill = FieldFill.UPDATE)
     @ApiModelProperty(value="修改人")
     private Long modifyBy;
 
     /**
      * 创建时间
      */
-    @TableField(value = "created")
+    @TableField(value = "created",fill = FieldFill.INSERT)
     @ApiModelProperty(value="创建时间")
     private Date created;
 
     /**
      * 修改时间
      */
-    @TableField(value = "last_update_time")
+    @TableField(value = "last_update_time",fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty(value="修改时间")
     private Date lastUpdateTime;
+
+    /**
+     * 标记当前的角色是否有该权限
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value="当前角色是否拥有这个权限")
+    private int own ;
 }
