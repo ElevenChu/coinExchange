@@ -15,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.Arrays;
+
 @RestController
 @Api(tags = "用户的CRUD")
 @RequestMapping("/users")
@@ -52,5 +54,18 @@ public class SysUserController {
         }
         return R.fail("新增失败");
     }
+
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除用户")
+    public R deleteUser(@RequestBody Long[] ids){
+        boolean b = sysUserService.removeByIds(Arrays.asList(ids));
+        if(b){
+            return R.ok();
+        }
+        return  R.fail("删除失败");
+
+    }
+
+    
 
 }
