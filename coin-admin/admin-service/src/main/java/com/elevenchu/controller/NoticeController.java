@@ -83,7 +83,34 @@ public class NoticeController {
         return R.fail("修改失败");
     }
 
+    @PostMapping
+    @ApiOperation("新增一个公告")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "notice",value = "notice的JSON数据")
+    })
+    @PreAuthorize("hasAuthority('notice_create')")
+    public  R add(Notice notice){
+        boolean b = noticeService.save(notice);
+        if(b){
+            return  R.ok();
+        }
+        return R.fail("新增公告失败");
+    }
 
 
+    @PatchMapping
+    @ApiOperation(value = "修改一个公告")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "notice" ,value = "notice的json数据")
+    })
+    @PreAuthorize("hasAuthority('notice_update')")
+    public R update(@RequestBody  @Validated  Notice notice){
+        boolean update = noticeService.updateById(notice);
+        if(update){
+            return R.ok();
+        }
+        return  R.fail("修改公告失败") ;
+
+    }
 
 }
