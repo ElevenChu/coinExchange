@@ -61,7 +61,7 @@ public class SysLoginServiceImpl implements SysLoginService {
         List<SimpleGrantedAuthority> authorities = authoritiesJsonArray.stream() // 组装我们的权限数据
                 .map(authorityJson->new SimpleGrantedAuthority(authorityJson.toString()))
                 .collect(Collectors.toList());
-        // 1 将该token 存储在redis 里面，配置我们的网关做jwt验证的操作
+        // 1 将该token 存储在redis 里面，配合我们的网关做jwt验证的操作
         redisTemplate.opsForValue().set(token,"", jwtToken.getExpiresIn() , TimeUnit.SECONDS);
         //2 我们返回给前端的Token 数据，少一个bearer：
         return new LoginResult(jwtToken.getTokenType()+" "+token, menus, authorities);
