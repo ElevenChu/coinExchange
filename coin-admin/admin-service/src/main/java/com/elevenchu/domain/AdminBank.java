@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 /**
     * 人民币充值卡号管理
     */
@@ -31,6 +33,7 @@ public class AdminBank {
      */
     @TableField(value = "`name`")
     @ApiModelProperty(value="开户人姓名")
+    @NotBlank
     private String name;
 
     /**
@@ -38,6 +41,7 @@ public class AdminBank {
      */
     @TableField(value = "bank_name")
     @ApiModelProperty(value="开户行名称")
+    @NotBlank
     private String bankName;
 
     /**
@@ -45,6 +49,7 @@ public class AdminBank {
      */
     @TableField(value = "bank_card")
     @ApiModelProperty(value="卡号")
+    @NotBlank
     private String bankCard;
 
     /**
