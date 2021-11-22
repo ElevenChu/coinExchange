@@ -11,9 +11,8 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
@@ -47,4 +46,37 @@ public class UserController {
         Page<User> userPage = userService.findByPage(page, mobile, userId, userName, realName, status);
         return R.ok(userPage);
     }
+    @PostMapping("/status")
+    @ApiOperation("修改用户状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id",value = "用户的ID"),
+            @ApiImplicitParam(name = "status",value = "用户的状态")
+    })
+
+    public R add(Long id,Byte status){
+        User user=new User();
+        user.setId(id);
+        user.setStatus(status);
+        boolean b = userService.updateById(user);
+        if(b){
+            return R.ok("更新成功");
+        }
+        return R.fail("更新失败");
+
+    }
+
+    @PatchMapping
+    @ApiOperation(value = "修改用户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "user", value = "会员的json数据"),
+    })
+    @PreAuthorize("hasAuthority('user_update')")
+    public R updateStatus(@RequestBody @Validated User user) {
+        boolean updateById = userService.updateById(user);
+        if (updateById) {
+            return R.ok("更新成功");
+        }
+        return R.fail("更新失败");
+    }
+
 }

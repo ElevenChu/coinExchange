@@ -1,15 +1,14 @@
 package com.elevenchu.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotBlank;
 
 /**
     * 用户表
@@ -39,6 +38,7 @@ public class User {
      */
     @TableField(value = "username")
     @ApiModelProperty(value="用户名")
+    @NotBlank
     private String username;
 
     /**
@@ -53,6 +53,7 @@ public class User {
      */
     @TableField(value = "mobile")
     @ApiModelProperty(value="手机号")
+    @NotBlank
     private String mobile;
 
     /**
@@ -219,14 +220,14 @@ public class User {
     /**
      * 修改时间
      */
-    @TableField(value = "last_update_time")
+    @TableField(value = "last_update_time",fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty(value="修改时间")
     private Date lastUpdateTime;
 
     /**
      * 创建时间
      */
-    @TableField(value = "created")
+    @TableField(value = "created",fill = FieldFill.INSERT)
     @ApiModelProperty(value="创建时间")
     private Date created;
 }
