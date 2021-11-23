@@ -230,4 +230,5 @@ public class User {
     @TableField(value = "created",fill = FieldFill.INSERT)
     @ApiModelProperty(value="创建时间")
     private Date created;
+
 }

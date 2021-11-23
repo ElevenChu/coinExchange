@@ -171,4 +171,25 @@ public class UserController {
         }
                 return R.ok(new UseAuthInfoVo(user,userAuthInfoList,userAuthAuditRecordList));
     }
+
+    @PostMapping("/auths/status")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name ="id" ,value = "用户ID"),
+            @ApiImplicitParam(name ="authStatus" ,value = "用户的审核状态"),
+            @ApiImplicitParam(name ="authCode" ,value = "一组图片的唯一标识"),
+            @ApiImplicitParam(name ="remark" ,value = "审核拒绝的原因")
+    })
+    public R updateUserAuthStatus(@RequestParam(required = true) Long id,@RequestParam(required = true)Byte authStatus,@RequestParam(required = true)Long authCode,@RequestParam(required = true)String remark){
+        //1.修改User里面的ReviewStatus
+        //2.在authAuditRecord里面添加一条记录
+        userService.updateUserAuthStatus(id,authStatus,authCode,remark);
+        return R.ok();
+
+
+
+    }
+
+
+
+
 }

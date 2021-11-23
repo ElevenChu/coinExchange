@@ -9,4 +9,6 @@ public interface UserService extends IService<User>{
     Page<User> findByPage(Page<User> page, String mobile, Long userId, String userName, String realName, Integer status,Integer reviewStatus);
 
     Page<User> findDirectInvitePage(Page<User> page, Long userId);
+
+    void updateUserAuthStatus(Long id, Byte authStatus, Long authCode, String remark);
 }
