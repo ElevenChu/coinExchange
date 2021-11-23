@@ -37,7 +37,12 @@ public class UserAddress {
     @TableField(value = "coin_id")
     @ApiModelProperty(value="币种ID")
     private Long coinId;
-
+    /**
+     * 币种名称
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "币种的名称")
+    private String coinName="测试币种";
     /**
      * 地址
      */
