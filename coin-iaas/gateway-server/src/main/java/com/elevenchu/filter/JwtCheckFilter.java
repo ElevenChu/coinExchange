@@ -23,7 +23,7 @@ import java.util.Set;
 public class JwtCheckFilter implements GlobalFilter, Ordered {
     @Autowired
     private StringRedisTemplate redisTemplate;
-    @Value("${no.require.urls:/admin/login,/user/gt/register}")
+    @Value("${no.require.urls:/admin/login,/user/gt/register,/user/login}")
     private Set<String> noRequireTokenUris;
 
 
