@@ -17,6 +17,7 @@ public class FlowRulesController {
     @GetMapping("/gateway")
     public Set<GatewayFlowRule> getGatewayFlowRules(){
         //test-------------
+        //2
         int x = 0;
         return GatewayRuleManager.getRules();
     }
