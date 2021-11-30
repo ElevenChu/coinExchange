@@ -2,18 +2,22 @@ package com.elevenchu.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.elevenchu.config.IdAutoConfiguration;
 import com.elevenchu.domain.UserAuthAuditRecord;
+import com.elevenchu.model.UserAuthForm;
 import com.elevenchu.service.UserAuthAuditRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.elevenchu.mapper.UserMapper;
 import com.elevenchu.domain.User;
 import com.elevenchu.service.UserService;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 @Service
@@ -66,6 +70,39 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         userAuthAuditRecordService.save(userAuthAuditRecord);
     }
+
+    @Override
+    public boolean identifyVerfiy(Long id, UserAuthForm userAuthForm) {
+        User user = getById(id);
+        Assert.notNull(user,"认证用户不存在");
+        Byte authStatus = user.getAuthStatus();
+        if(!authStatus.equals((byte) 0)){
+            throw new IllegalArgumentException("该用户已经认证成功了");
+
+        }
+        //执行认证
+        checkForm(userAuthForm);//极验
+
+        //实名认证
+        boolean check = IdAutoConfiguration.check(userAuthForm.getRealName(), userAuthForm.getIdCard());
+        if (!check) {
+            throw new IllegalArgumentException("该用户信息错误,请检查");
+        }
+        //设置用户认证属性
+        user.setAuthtime(new Date());
+        user.setAuthStatus((byte) 1);
+        user.setRealName(userAuthForm.getRealName());
+        user.setIdCard(userAuthForm.getIdCard());
+        user.setIdCardType(userAuthForm.getIdCardType());
+
+        return updateById(user);
+    }
+
+    private boolean checkForm(UserAuthForm userAuthForm){
+        return true;
+
+    }
+
 
 
 }

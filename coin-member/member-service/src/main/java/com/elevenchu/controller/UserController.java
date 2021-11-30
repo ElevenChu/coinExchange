@@ -6,6 +6,7 @@ import com.elevenchu.domain.User;
 import com.elevenchu.domain.UserAuthAuditRecord;
 import com.elevenchu.domain.UserAuthInfo;
 import com.elevenchu.model.R;
+import com.elevenchu.model.UserAuthForm;
 import com.elevenchu.service.UserAuthAuditRecordService;
 import com.elevenchu.service.UserAuthInfoService;
 import com.elevenchu.service.UserService;
@@ -16,6 +17,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -188,6 +190,23 @@ public class UserController {
 
 
     }
+
+    @GetMapping("/authAccount")
+    @ApiOperation("用户的实名认证")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "",value = "")
+    })
+    public R  identifyCheck(@RequestBody UserAuthForm userAuthForm){
+        String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        boolean isOk=   userService.identifyVerfiy(Long.valueOf(idStr),userAuthForm);
+        if(isOk){
+            System.out.println("11111");
+            return R.ok();
+        }
+        System.out.println("11111");
+        return R.fail("认证失败");
+    }
+
 
 
 
