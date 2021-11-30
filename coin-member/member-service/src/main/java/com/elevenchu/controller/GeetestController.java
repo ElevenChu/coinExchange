@@ -1,7 +1,7 @@
 package com.elevenchu.controller;
 
 
-import com.alibaba.nacos.client.utils.IPUtil;
+
 import com.elevenchu.geetest.GeetestLib;
 import com.elevenchu.geetest.GeetestLibResult;
 import com.elevenchu.model.R;
@@ -45,7 +45,7 @@ public class GeetestController {
         paramMap.put("user_id", uuid);
         paramMap.put("client_type", "web");
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        paramMap.put("ip_address", IpUtil.getIpAddress(servletRequestAttributes.getRequest()));
+        paramMap.put("ip_address", IpUtil.getIpAddr(servletRequestAttributes.getRequest()));
 
         GeetestLibResult result = geetestLib.register(digestmod, paramMap); // 极验服务器交互
 
