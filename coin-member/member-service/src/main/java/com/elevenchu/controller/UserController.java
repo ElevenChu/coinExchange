@@ -22,6 +22,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -191,7 +192,7 @@ public class UserController {
 
     }
 
-    @GetMapping("/authAccount")
+    @PostMapping("/authAccount")
     @ApiOperation("用户的实名认证")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "",value = "")
@@ -200,15 +201,21 @@ public class UserController {
         String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         boolean isOk=   userService.identifyVerfiy(Long.valueOf(idStr),userAuthForm);
         if(isOk){
-            System.out.println("11111");
             return R.ok();
         }
-        System.out.println("11111");
         return R.fail("认证失败");
     }
 
+@PostMapping("/authUser")
+@ApiOperation("用户进行高级认证")
+@ApiImplicitParams({
+        @ApiImplicitParam(name = "imgs",value = "用户的图片地址")
+})
+ public R authUser(String[] imgs){
+    String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+    userService.authUser(Long.valueOf(idStr), Arrays.asList(imgs));
 
-
+}
 
 
 }

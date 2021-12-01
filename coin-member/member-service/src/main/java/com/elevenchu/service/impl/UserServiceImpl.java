@@ -1,18 +1,22 @@
 package com.elevenchu.service.impl;
 
+import cn.hutool.core.lang.Snowflake;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.config.IdAutoConfiguration;
 import com.elevenchu.domain.UserAuthAuditRecord;
+import com.elevenchu.domain.UserAuthInfo;
 import com.elevenchu.geetest.GeetestLib;
 import com.elevenchu.model.UserAuthForm;
 import com.elevenchu.service.UserAuthAuditRecordService;
+import com.elevenchu.service.UserAuthInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -32,8 +36,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+
     @Autowired
     private UserAuthAuditRecordService userAuthAuditRecordService;
+    @Autowired
+    private Snowflake snowflake;
+    @Autowired
+    private UserAuthInfoService userAuthInfoService;
 
 
     @Override
@@ -108,6 +117,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return updateById(user);
     }
 
+
     private void checkForm(UserAuthForm userAuthForm) {
         userAuthForm.check(geetestLib, redisTemplate);
 
@@ -142,7 +152,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                         UserAuthAuditRecord userAuthAuditRecord = userAuthAuditRecordList.get(0);
                         seniorAuthDesc = userAuthAuditRecord.getRemark();
                     }
-                    seniorAuthDesc = "原因未知";
+                    //eniorAuthDesc = "原因未知";
                     break;
                 case 0:
                     seniorAuthStatus = 0;
@@ -154,4 +164,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setSeniorAuthDesc(seniorAuthDesc);
         return user;
     }
+
+    @Override
+    public void authUser(Long id, List<String> imgs) {
+        if (CollectionUtils.isEmpty(imgs)) {
+            throw new IllegalArgumentException("用户的身份证信息为null");
+        }
+        User user = getById(id);
+        if (user == null) {
+            throw new IllegalArgumentException("请输入正确的userId");
+        }
+        long authCode = snowflake.nextId(); // 使用时间戳(有重复) --> 雪花算法
+        List<UserAuthInfo> userAuthInfoList = new ArrayList<>(imgs.size());
+        for (int i=0;i<imgs.size();i++){
+            String s = imgs.get(i);
+            UserAuthInfo userAuthInfo = new UserAuthInfo();
+            userAuthInfo.setImageUrl(imgs.get(i));
+            userAuthInfo.setUserId(id);
+            userAuthInfo.setSerialno(i + 1);  // 设置序号 ,1 正面  2 反面 3 手持
+            userAuthInfo.setAuthCode(authCode); // 是一组身份信息的标识 3 个图片为一组
+            userAuthInfoList.add(userAuthInfo);
+        }
+        userAuthInfoService.saveBatch(userAuthInfoList); // 批量操作
+        user.setReviewsStatus(0);
+        updateById(user);
+        
+    }
+
 }
