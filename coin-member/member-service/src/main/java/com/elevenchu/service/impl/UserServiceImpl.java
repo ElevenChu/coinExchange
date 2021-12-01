@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -20,10 +21,11 @@ import com.elevenchu.domain.User;
 import com.elevenchu.service.UserService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService{
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Autowired
     private GeetestLib geetestLib;
 
@@ -31,12 +33,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
-  private UserAuthAuditRecordService userAuthAuditRecordService;
+    private UserAuthAuditRecordService userAuthAuditRecordService;
 
 
     @Override
-    public Page<User> findByPage(Page<User> page, String mobile, Long userId, String userName, String realName, Integer status,Integer reviewStatus) {
-        return page(page,new LambdaQueryWrapper<User>()
+    public Page<User> findByPage(Page<User> page, String mobile, Long userId, String userName, String realName, Integer status, Integer reviewStatus) {
+        return page(page, new LambdaQueryWrapper<User>()
                 .like(!StringUtils.isEmpty(mobile), User::getMobile, mobile)
                 .like(!StringUtils.isEmpty(userName), User::getUsername, userName)
                 .like(!StringUtils.isEmpty(realName), User::getRealName, realName)
@@ -63,7 +65,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Transactional
     public void updateUserAuthStatus(Long id, Byte authStatus, Long authCode, String remark) {
         User user = getById(id);
-        if(user!=null){
+        if (user != null) {
             user.setReviewsStatus(authStatus.intValue());
             updateById(user); // 修改用户的状态
         }
@@ -82,9 +84,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public boolean identifyVerfiy(Long id, UserAuthForm userAuthForm) {
         User user = getById(id);
-        Assert.notNull(user,"认证用户不存在");
+        Assert.notNull(user, "认证用户不存在");
         Byte authStatus = user.getAuthStatus();
-        if(!authStatus.equals((byte) 0)){
+        if (!authStatus.equals((byte) 0)) {
             throw new IllegalArgumentException("该用户已经认证成功了");
 
         }
@@ -106,12 +108,50 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return updateById(user);
     }
 
-    private void checkForm(UserAuthForm userAuthForm){
+    private void checkForm(UserAuthForm userAuthForm) {
         userAuthForm.check(geetestLib, redisTemplate);
 
 
     }
 
 
+    public User getById(Serializable id) {
+        User user = super.getById(id);
+        if (user == null) {
+            throw new IllegalArgumentException("请输入正确的用户ID");
+        }
+        Byte seniorAuthStatus = null;//用户的高级认证状态
+        String seniorAuthDesc = "";//用户的高级认证未通过，原因
+        Integer reviewsStatus = user.getReviewsStatus();//用户被审核状态1通过，2拒绝，0待审核
+        if (reviewsStatus == null) {//为null时代表用户的资料没有上传
+            seniorAuthStatus = 3;
+            seniorAuthDesc = "资料未填写";
+        }else {
 
+            switch (reviewsStatus) {
+                case 1:
+                    seniorAuthStatus = 1;
+                    seniorAuthDesc = "审核通过";
+                    break;
+                case 2:
+                    seniorAuthStatus = 2;
+                    //查询被拒绝原因-->审核记录里面的
+                    //时间排序
+                    List<UserAuthAuditRecord> userAuthAuditRecordList = userAuthAuditRecordService.getUserAuthAuditRecordList(user.getId());
+                    if (!CollectionUtils.isEmpty(userAuthAuditRecordList)) {
+                        UserAuthAuditRecord userAuthAuditRecord = userAuthAuditRecordList.get(0);
+                        seniorAuthDesc = userAuthAuditRecord.getRemark();
+                    }
+                    seniorAuthDesc = "原因未知";
+                    break;
+                case 0:
+                    seniorAuthStatus = 0;
+                    seniorAuthDesc = "等待审核";
+                    break;
+            }
+        }
+        user.setSeniorAuthStatus(seniorAuthStatus);
+        user.setSeniorAuthDesc(seniorAuthDesc);
+        return user;
+    }
 }
