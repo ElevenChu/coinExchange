@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @ApiModel(value = "用户的身份认证信息")
-public class UserAuthForm {
+public class UserAuthForm extends GeetestForm {
     @NotBlank
     @ApiModelProperty(value = "用户的真实名称")
     private String realName ;

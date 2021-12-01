@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.config.IdAutoConfiguration;
 import com.elevenchu.domain.UserAuthAuditRecord;
+import com.elevenchu.geetest.GeetestLib;
 import com.elevenchu.model.UserAuthForm;
 import com.elevenchu.service.UserAuthAuditRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -22,7 +24,13 @@ import org.springframework.util.StringUtils;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService{
-  @Autowired
+    @Autowired
+    private GeetestLib geetestLib;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
   private UserAuthAuditRecordService userAuthAuditRecordService;
 
 
@@ -98,8 +106,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return updateById(user);
     }
 
-    private boolean checkForm(UserAuthForm userAuthForm){
-        return true;
+    private void checkForm(UserAuthForm userAuthForm){
+        userAuthForm.check(geetestLib, redisTemplate);
+
 
     }
 

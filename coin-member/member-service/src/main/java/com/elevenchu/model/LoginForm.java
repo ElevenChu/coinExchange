@@ -7,7 +7,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 @Data
 @ApiModel("登录的表单参数")
-public class LoginForm {
+public class LoginForm extends GeetestForm {
 
     @ApiModelProperty(value = "国家的电话编号")
     private String countryCode ;
