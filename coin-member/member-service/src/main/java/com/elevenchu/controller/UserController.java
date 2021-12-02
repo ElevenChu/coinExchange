@@ -214,7 +214,7 @@ public class UserController {
  public R authUser(String[] imgs){
     String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
     userService.authUser(Long.valueOf(idStr), Arrays.asList(imgs));
-
+return R.ok();
 }
 
 
