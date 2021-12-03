@@ -22,4 +22,6 @@ public interface UserService extends IService<User>{
     void authUser(Long id, List<String> asList);
 
     boolean updatePhone(Long id,UpdatePhoneParam updatePhoneParam);
+
+    boolean checkNewPhone(String mobile, String countryCode);
 }

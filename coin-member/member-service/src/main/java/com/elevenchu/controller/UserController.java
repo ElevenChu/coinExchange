@@ -232,7 +232,17 @@ public R updatePhone(@RequestBody UpdatePhoneParam updatePhoneParam){
         }
         return R.fail("修改手机号失败");
 }
+@GetMapping("/checkTel")
+@ApiOperation("检查新的手机号是否可用,如可用,则给该新手机发送验证码")
+@ApiImplicitParams({
+        @ApiImplicitParam(name = "mobile", value = "新的手机号"),
+        @ApiImplicitParam(name = "countryCode", value = "手机号的区域")
+})
+public R checkNewPhone(@RequestParam(required = true) String mobile,@RequestParam(required = true)String countryCode){
+    boolean isOk = userService.checkNewPhone(mobile, countryCode);
+    return isOk ? R.ok() : R.fail("新的手机号校验失败");
 
 
+}
 
 }

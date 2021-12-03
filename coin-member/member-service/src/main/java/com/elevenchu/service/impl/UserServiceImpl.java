@@ -2,13 +2,16 @@ package com.elevenchu.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.config.IdAutoConfiguration;
+import com.elevenchu.domain.Sms;
 import com.elevenchu.domain.UserAuthAuditRecord;
 import com.elevenchu.domain.UserAuthInfo;
 import com.elevenchu.geetest.GeetestLib;
 import com.elevenchu.model.UpdatePhoneParam;
 import com.elevenchu.model.UserAuthForm;
+import com.elevenchu.service.SmsService;
 import com.elevenchu.service.UserAuthAuditRecordService;
 import com.elevenchu.service.UserAuthInfoService;
 import com.elevenchu.service.UserService;
@@ -32,15 +35,14 @@ import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotBlank;
 
+import static org.graalvm.compiler.debug.DebugOptions.Count;
+
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Autowired
     private GeetestLib geetestLib;
-
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
-
-
     @Autowired
     private UserAuthAuditRecordService userAuthAuditRecordService;
     @Autowired
@@ -49,6 +51,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserAuthInfoService userAuthInfoService;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private SmsService smsService;
 
 
     @Override
@@ -216,7 +220,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         //3.验证新手机
-        String newMobileCode = stringRedisTemplate.opsForValue().get("SMS:VERIFY_OLD_PHONE:" + updatePhoneParam.getNewMobilePhone());
+        String newMobileCode = stringRedisTemplate.opsForValue().get("SMS:CHANGE_PHONE_:" + updatePhoneParam.getNewMobilePhone());
         if(updatePhoneParam.getValidateCode().equals(newMobileCode)){
             throw new IllegalArgumentException("新手机的验证码错误");
         }
@@ -225,6 +229,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setMobile(updatePhoneParam.getNewMobilePhone());
 
         return updateById(user);
+    }
+
+    /**
+     * 检验新的手机号是否可用,若可用,则给新的手机号发送一个验证码
+     *
+     * @param mobile      新的手机号
+     * @param countryCode 国家代码
+     * @return
+     */
+    @Override
+    public boolean checkNewPhone(String mobile, String countryCode) {
+        //1 新的手机号,没有旧的用户使用
+      int count=  count(new LambdaQueryWrapper<User>().eq(User::getMobile, mobile).eq(User::getCountryCode, countryCode));
+        if (count > 0) { // 有用户占用这个手机号
+            throw new IllegalArgumentException("该手机号已经被占用");
+        }
+        Sms sms=new Sms();
+        sms.setMobile(mobile);
+        sms.setCountryCode(countryCode);
+        sms.setTemplateCode("CHANGE_PHONE_VERIFY");//模板代码  -- > 校验手机号
+        return smsService.sendSms(sms);
+
     }
 
 }
