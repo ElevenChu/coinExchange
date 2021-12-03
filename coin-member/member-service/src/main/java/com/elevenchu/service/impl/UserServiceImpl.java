@@ -9,6 +9,7 @@ import com.elevenchu.domain.Sms;
 import com.elevenchu.domain.UserAuthAuditRecord;
 import com.elevenchu.domain.UserAuthInfo;
 import com.elevenchu.geetest.GeetestLib;
+import com.elevenchu.model.UpdateLoginParam;
 import com.elevenchu.model.UpdatePhoneParam;
 import com.elevenchu.model.UserAuthForm;
 import com.elevenchu.service.SmsService;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -252,5 +254,68 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return smsService.sendSms(sms);
 
     }
+    /**
+     * 修改用户的登录密码
+     *
+     * @param userId           用户的ID
+     * @param updateLoginParam 修改密码的表单参数
+     * @return
+     */
+    @Override
+    public boolean updateUserLoginPwd(Long userId, UpdateLoginParam updateLoginParam) {
+        User user = getById(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("用户的Id错误");
+        }
+      String oldpassword = updateLoginParam.getOldpassword();
+        // 1 校验之前的密码 数据库的密码都是我们加密后的密码.-->
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        boolean matches = bCryptPasswordEncoder.matches(updateLoginParam.getOldpassword(), user.getPassword());
+        if (!matches) {
+            throw new IllegalArgumentException("用户的原始密码输入错误");
+        }
+        // 2 校验手机的验证码
+        String validateCode = updateLoginParam.getValidateCode();
+        String phoneValidateCode = stringRedisTemplate.opsForValue().get("SMS:CHANGE_LOGIN_PWD_VERIFY:" + user.getMobile());//"SMS:CHANGE_LOGIN_PWD_VERIFY:111111"
+        if (!validateCode.equals(phoneValidateCode)) {
+            throw new IllegalArgumentException("手机验证码错误");
+        }
+        user.setPassword(bCryptPasswordEncoder.encode(updateLoginParam.getNewpassword())); // 修改为加密后的密码
+        return updateById(user);
+    }
+
+    /**
+     * 修改用户的交易密码
+     *
+     * @param userId           用户的Id
+     * @param updateLoginParam 修改交易密码的表单参数
+     * @return
+     */
+    @Override
+    public boolean updateUserPayPwd(Long userId, UpdateLoginParam updateLoginParam) {
+        // 1 查询之前的用户
+        User user = getById(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("用户的Id错误");
+        }
+        String oldpassword = updateLoginParam.getOldpassword();
+        // 1 校验之前的密码 数据库的密码都是我们加密后的密码.-->
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
+        boolean matches = bCryptPasswordEncoder.matches(updateLoginParam.getOldpassword(), user.getPaypassword());
+        if (!matches) {
+            throw new IllegalArgumentException("用户的原始密码输入错误");
+        }
+        // 2 校验手机的验证码
+        String validateCode = updateLoginParam.getValidateCode();
+        String phoneValidateCode = stringRedisTemplate.opsForValue().get("SMS:CHANGE_PAY_PWD_VERIFY:" + user.getMobile());//"SMS:CHANGE_LOGIN_PWD_VERIFY:111111"
+        if (!validateCode.equals(phoneValidateCode)) {
+            throw new IllegalArgumentException("手机验证码错误");
+        }
+        user.setPaypassword(bCryptPasswordEncoder.encode(updateLoginParam.getNewpassword())); // 修改为加密后的密码
+        return updateById(user);
+    }
+
+
 
 }

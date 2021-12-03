@@ -6,6 +6,7 @@ import com.elevenchu.domain.User;
 import com.elevenchu.domain.UserAuthAuditRecord;
 import com.elevenchu.domain.UserAuthInfo;
 import com.elevenchu.model.R;
+import com.elevenchu.model.UpdateLoginParam;
 import com.elevenchu.model.UpdatePhoneParam;
 import com.elevenchu.model.UserAuthForm;
 import com.elevenchu.service.UserAuthAuditRecordService;
@@ -244,5 +245,37 @@ public R checkNewPhone(@RequestParam(required = true) String mobile,@RequestPara
 
 
 }
+    @PostMapping("/updateLoginPassword")
+    @ApiOperation(value = "修改用户的登录密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "updateLoginParam", value = "修改用户的登录密码")
+    })
+public R updateLoginPwd(@RequestBody @Validated UpdateLoginParam updateLoginParam){
+      Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+      boolean isOk=userService.updateUserLoginPwd(userId,updateLoginParam);
+        if (isOk) {
+            return R.ok();
+        }
+        return R.fail("修改失败");
+
+}
+
+    @PostMapping("/updatePayPassword")
+    @ApiOperation(value = "修改用户的交易密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "updateLoginParam", value = "修改用户的交易密码")
+    })
+    public R updatePayPwd(@RequestBody @Validated UpdateLoginParam updateLoginParam) {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        boolean isOk = userService.updateUserPayPwd(userId, updateLoginParam);
+        if (isOk) {
+            return R.ok();
+        }
+        return R.fail("修改失败");
+    }
+
+
+
+
 
 }

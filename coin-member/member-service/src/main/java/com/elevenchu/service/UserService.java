@@ -3,6 +3,7 @@ package com.elevenchu.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.elevenchu.model.UpdateLoginParam;
 import com.elevenchu.model.UpdatePhoneParam;
 import com.elevenchu.model.UserAuthForm;
 
@@ -24,4 +25,8 @@ public interface UserService extends IService<User>{
     boolean updatePhone(Long id,UpdatePhoneParam updatePhoneParam);
 
     boolean checkNewPhone(String mobile, String countryCode);
+
+    boolean updateUserLoginPwd(Long userId, UpdateLoginParam updateLoginParam);
+
+    boolean updateUserPayPwd(Long userId, UpdateLoginParam updateLoginParam);
 }
