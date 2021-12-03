@@ -7,14 +7,17 @@ import com.elevenchu.config.IdAutoConfiguration;
 import com.elevenchu.domain.UserAuthAuditRecord;
 import com.elevenchu.domain.UserAuthInfo;
 import com.elevenchu.geetest.GeetestLib;
+import com.elevenchu.model.UpdatePhoneParam;
 import com.elevenchu.model.UserAuthForm;
 import com.elevenchu.service.UserAuthAuditRecordService;
 import com.elevenchu.service.UserAuthInfoService;
+import com.elevenchu.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,11 +25,12 @@ import java.util.List;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.elevenchu.mapper.UserMapper;
 import com.elevenchu.domain.User;
-import com.elevenchu.service.UserService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import javax.validation.constraints.NotBlank;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
@@ -43,6 +47,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private Snowflake snowflake;
     @Autowired
     private UserAuthInfoService userAuthInfoService;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
 
     @Override
@@ -189,6 +195,36 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setReviewsStatus(0);
         updateById(user);
         
+    }
+
+    /**
+     * 修改用户的手机号
+     * @param userId
+     * @param updatePhoneParam
+     * @return
+     */
+    @Override
+    public boolean updatePhone(Long userId,UpdatePhoneParam updatePhoneParam) {
+        //1.使用userId查询用户
+        User user = getById(userId);
+
+        //2.验证旧手机
+        @NotBlank String oldMobile = user.getMobile();
+        String oldMobileCode = stringRedisTemplate.opsForValue().get("SMS:VERIFY_OLD_PHONE:" + oldMobile);
+        if(!updatePhoneParam.getOldValidateCode().equals(oldMobileCode)){
+            throw new IllegalArgumentException("旧手机的验证码错误");
+        }
+
+        //3.验证新手机
+        String newMobileCode = stringRedisTemplate.opsForValue().get("SMS:VERIFY_OLD_PHONE:" + updatePhoneParam.getNewMobilePhone());
+        if(updatePhoneParam.getValidateCode().equals(newMobileCode)){
+            throw new IllegalArgumentException("新手机的验证码错误");
+        }
+
+        //执行修改手机号,并更新保存
+        user.setMobile(updatePhoneParam.getNewMobilePhone());
+
+        return updateById(user);
     }
 
 }

@@ -6,6 +6,7 @@ import com.elevenchu.domain.User;
 import com.elevenchu.domain.UserAuthAuditRecord;
 import com.elevenchu.domain.UserAuthInfo;
 import com.elevenchu.model.R;
+import com.elevenchu.model.UpdatePhoneParam;
 import com.elevenchu.model.UserAuthForm;
 import com.elevenchu.service.UserAuthAuditRecordService;
 import com.elevenchu.service.UserAuthInfoService;
@@ -216,6 +217,22 @@ public class UserController {
     userService.authUser(Long.valueOf(idStr), Arrays.asList(imgs));
 return R.ok();
 }
+
+@PostMapping("/updatePhone")
+@ApiOperation("修改手机号")
+@ApiImplicitParams({
+        @ApiImplicitParam(name = "updatePhoneParam",value = "updatePhoneParam的JSON数据")
+
+})
+public R updatePhone(@RequestBody UpdatePhoneParam updatePhoneParam){
+    String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+         boolean isOk=   userService.updatePhone(Long.valueOf(idStr),updatePhoneParam);
+        if (isOk){
+            return R.ok();
+        }
+        return R.fail("修改手机号失败");
+}
+
 
 
 }
