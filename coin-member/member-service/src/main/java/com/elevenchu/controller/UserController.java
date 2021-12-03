@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.User;
 import com.elevenchu.domain.UserAuthAuditRecord;
 import com.elevenchu.domain.UserAuthInfo;
-import com.elevenchu.model.R;
-import com.elevenchu.model.UpdateLoginParam;
-import com.elevenchu.model.UpdatePhoneParam;
-import com.elevenchu.model.UserAuthForm;
+import com.elevenchu.model.*;
 import com.elevenchu.service.UserAuthAuditRecordService;
 import com.elevenchu.service.UserAuthInfoService;
 import com.elevenchu.service.UserService;
@@ -275,6 +272,16 @@ public R updateLoginPwd(@RequestBody @Validated UpdateLoginParam updateLoginPara
     }
 
 
+    @PostMapping("/setPayPassword")
+    @ApiOperation(value = "重新设置交易密码")
+    public R setPayPassword(@RequestBody @Validated UnSetPayPasswordParam unsetPayPasswordParam) {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        boolean isOk = userService.unsetPayPassword(userId, unsetPayPasswordParam);
+        if (isOk) {
+            return R.ok();
+        }
+        return R.fail("重置失败");
+    }
 
 
 

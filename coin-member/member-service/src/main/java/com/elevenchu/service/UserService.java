@@ -3,6 +3,7 @@ package com.elevenchu.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.elevenchu.model.UnSetPayPasswordParam;
 import com.elevenchu.model.UpdateLoginParam;
 import com.elevenchu.model.UpdatePhoneParam;
 import com.elevenchu.model.UserAuthForm;
@@ -29,4 +30,6 @@ public interface UserService extends IService<User>{
     boolean updateUserLoginPwd(Long userId, UpdateLoginParam updateLoginParam);
 
     boolean updateUserPayPwd(Long userId, UpdateLoginParam updateLoginParam);
+
+    boolean unsetPayPassword(Long userId, UnSetPayPasswordParam unsetPayPasswordParam);
 }

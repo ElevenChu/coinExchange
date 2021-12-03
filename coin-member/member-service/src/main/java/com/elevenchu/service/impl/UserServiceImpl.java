@@ -9,6 +9,7 @@ import com.elevenchu.domain.Sms;
 import com.elevenchu.domain.UserAuthAuditRecord;
 import com.elevenchu.domain.UserAuthInfo;
 import com.elevenchu.geetest.GeetestLib;
+import com.elevenchu.model.UnSetPayPasswordParam;
 import com.elevenchu.model.UpdateLoginParam;
 import com.elevenchu.model.UpdatePhoneParam;
 import com.elevenchu.model.UserAuthForm;
@@ -315,6 +316,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setPaypassword(bCryptPasswordEncoder.encode(updateLoginParam.getNewpassword())); // 修改为加密后的密码
         return updateById(user);
     }
+
+    /**
+     * 重置用户的支付密码
+     *
+     * @param userId                用户的Id
+     * @param unsetPayPasswordParam 重置的表单参数
+     * @return 是否重置成功
+     */
+    @Override
+    public boolean unsetPayPassword(Long userId, UnSetPayPasswordParam unsetPayPasswordParam) {
+        User user = getById(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("用户的Id 错误");
+        }
+        String validateCode = unsetPayPasswordParam.getValidateCode();
+        String phoneValidate = stringRedisTemplate.opsForValue().get("SMS:FORGOT_PAY_PWD_VERIFY:" + user.getMobile());
+        if (!validateCode.equals(phoneValidate)) {
+            throw new IllegalArgumentException("用户的验证码错误");
+        }
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        user.setPaypassword(bCryptPasswordEncoder.encode(unsetPayPasswordParam.getPayPassword()));
+
+        return updateById(user);
+    }
+
+
+
+
+
 
 
 
