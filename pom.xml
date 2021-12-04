@@ -24,7 +24,7 @@
         <redisson-spring-boot-starter.version>3.13.3</redisson-spring-boot-starter.version>
         <jetcache-starter-redis.version>2.6.0</jetcache-starter-redis.version>
         <disruptor.version>3.4.2</disruptor.version>
-        <org.mapstruct.version>1.4.0.Beta3</org.mapstruct.version>
+        <org.mapstruct.version>1.2.0.Final</org.mapstruct.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <swagger-annotations.version>1.5.20</swagger-annotations.version>
         <googleauth.version>1.1.5</googleauth.version>
