@@ -32,4 +32,6 @@ public interface UserService extends IService<User>{
     boolean updateUserPayPwd(Long userId, UpdateLoginParam updateLoginParam);
 
     boolean unsetPayPassword(Long userId, UnSetPayPasswordParam unsetPayPasswordParam);
+
+    List<User> getUserInvites(Long userId);
 }

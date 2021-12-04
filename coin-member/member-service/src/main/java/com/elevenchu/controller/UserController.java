@@ -281,8 +281,14 @@ public R updateLoginPwd(@RequestBody @Validated UpdateLoginParam updateLoginPara
             return R.ok();
         }
         return R.fail("重置失败");
+
     }
-
-
+    @GetMapping("/invites")
+    @ApiOperation("用户的邀请列表")
+    public R<List<User>> getUserInvites(){
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        List<User> users=userService.getUserInvites(userId);
+        return R.ok(users);
+    }
 
 }
