@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.elevenchu.dto.UserDto;
-import com.elevenchu.model.UnSetPayPasswordParam;
-import com.elevenchu.model.UpdateLoginParam;
-import com.elevenchu.model.UpdatePhoneParam;
-import com.elevenchu.model.UserAuthForm;
+import com.elevenchu.model.*;
 
 import java.util.List;
 
@@ -37,4 +34,6 @@ public interface UserService extends IService<User>{
     List<User> getUserInvites(Long userId);
 
     List<UserDto> getBasicUsers(List<Long> ids);
+
+    boolean register(RegisterParam registerParam);
 }

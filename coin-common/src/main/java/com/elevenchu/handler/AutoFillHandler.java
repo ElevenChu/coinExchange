@@ -34,7 +34,11 @@ public class AutoFillHandler implements MetaObjectHandler {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();//从安全的上下文中获取用户ID
         if(authentication!=null){
             String s = authentication.getPrincipal().toString();//s即为String版的用户ID
+          if("anonymousUser".equals(s)){
+              return null;
+          }
             return Long.valueOf(s);//用户ID转成Long
+
         }
 
             return null;

@@ -293,10 +293,31 @@ public R updateLoginPwd(@RequestBody @Validated UpdateLoginParam updateLoginPara
         return R.ok(users);
     }
 
+    /**
+     * 用于admin-service 远程调用member-service
+     * @param ids
+     * @return
+     */
 
     @Override
     public List<UserDto> getBasicUsers(List<Long> ids) {
        List<UserDto> userDtos=userService.getBasicUsers(ids);
         return userDtos;
     }
+
+    @PostMapping("/register")
+    @ApiOperation("用户的注册")
+    public R register(@RequestBody RegisterParam registerParam){
+        boolean isOk = userService.register(registerParam);
+        if(isOk){
+            return R.ok();
+        }
+        return R.fail("注册失败");
+
+    }
+
+
+
+
+
 }

@@ -1,6 +1,8 @@
 package com.elevenchu.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.RandomUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -11,14 +13,12 @@ import com.elevenchu.domain.UserAuthInfo;
 import com.elevenchu.dto.UserDto;
 import com.elevenchu.geetest.GeetestLib;
 import com.elevenchu.mappers.UserDtoMapper;
-import com.elevenchu.model.UnSetPayPasswordParam;
-import com.elevenchu.model.UpdateLoginParam;
-import com.elevenchu.model.UpdatePhoneParam;
-import com.elevenchu.model.UserAuthForm;
+import com.elevenchu.model.*;
 import com.elevenchu.service.SmsService;
 import com.elevenchu.service.UserAuthAuditRecordService;
 import com.elevenchu.service.UserAuthInfoService;
 import com.elevenchu.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -44,6 +44,7 @@ import javax.validation.constraints.NotBlank;
 import static org.graalvm.compiler.debug.DebugOptions.Count;
 
 @Service
+@Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Autowired
     private GeetestLib geetestLib;
@@ -381,5 +382,59 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     }
 
+    /**
+     * 用户的注册
+     * @param registerParam
+     * @return
+     */
+    @Override
+    public boolean register(RegisterParam registerParam) {
+        log.info("用户开始注册{}", JSON.toJSONString(registerParam, true));
+        String mobile = registerParam.getMobile();
+        String email = registerParam.getEmail();
+        //1.简单校验
+        if (StringUtils.isEmpty(email)&&StringUtils.isEmpty(mobile)){
+            throw new IllegalArgumentException("邮箱和手机号不能同时为空");
+        }
+        //2.查询校验
+        int count=count(new LambdaQueryWrapper<User>().eq(!StringUtils.isEmpty(email),User::getEmail,email)
+        .eq(!StringUtils.isEmpty(mobile),User::getMobile,mobile));
+
+        if(count>0){
+            throw new IllegalArgumentException("邮箱或手机号已经被注册");
+        }
+        // 进行极验的校验
+        registerParam.check(geetestLib, redisTemplate);
+        // 构建一个新的用户
+        User user = getUser(registerParam); 
+        return save(user);
+
+
+        
+    }
+
+    private User getUser(RegisterParam registerParam) {
+        User user = new User();
+        user.setCountryCode(registerParam.getCountryCode());
+        user.setEmail(registerParam.getEmail());
+        user.setMobile(registerParam.getMobile());
+        String encodePwd = new BCryptPasswordEncoder().encode(registerParam.getPassword());
+        user.setPassword(encodePwd);
+        user.setPaypassSetting(false);
+        user.setStatus((byte) 1);
+        user.setType((byte) 1);
+        user.setAuthStatus((byte) 0);
+        user.setLogins(0);
+        user.setInviteCode(RandomUtil.randomString(6)); // 用户的邀请码
+        if (!StringUtils.isEmpty(registerParam.getInvitionCode())) {
+            User userPre = getOne(new LambdaQueryWrapper<User>().eq(User::getInviteCode, registerParam.getInvitionCode()));
+            if (userPre != null) {
+                user.setDirectInviteid(String.valueOf(userPre.getId())); // 邀请人的id , 需要查询
+                user.setInviteRelation(String.valueOf(userPre.getId())); // 邀请人的id , 需要查询
+            }
+
+        }
+        return user;
+    }
 
 }
