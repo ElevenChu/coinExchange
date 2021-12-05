@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.User;
 import com.elevenchu.domain.UserAuthAuditRecord;
 import com.elevenchu.domain.UserAuthInfo;
+import com.elevenchu.dto.UserDto;
+import com.elevenchu.feign.UserServiceFeign;
 import com.elevenchu.model.*;
 import com.elevenchu.service.UserAuthAuditRecordService;
 import com.elevenchu.service.UserAuthInfoService;
@@ -28,7 +30,7 @@ import java.util.List;
 @RestController
 @Api("会员的控制器")
 @RequestMapping("/users")
-public class UserController {
+public class UserController implements UserServiceFeign {
     @Autowired
     private UserService userService;
     @Autowired
@@ -291,4 +293,10 @@ public R updateLoginPwd(@RequestBody @Validated UpdateLoginParam updateLoginPara
         return R.ok(users);
     }
 
+
+    @Override
+    public List<UserDto> getBasicUsers(List<Long> ids) {
+       List<UserDto> userDtos=userService.getBasicUsers(ids);
+        return userDtos;
+    }
 }

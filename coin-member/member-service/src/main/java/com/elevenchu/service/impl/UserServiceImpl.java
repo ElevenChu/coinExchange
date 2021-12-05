@@ -8,7 +8,9 @@ import com.elevenchu.config.IdAutoConfiguration;
 import com.elevenchu.domain.Sms;
 import com.elevenchu.domain.UserAuthAuditRecord;
 import com.elevenchu.domain.UserAuthInfo;
+import com.elevenchu.dto.UserDto;
 import com.elevenchu.geetest.GeetestLib;
+import com.elevenchu.mappers.UserDtoMapper;
 import com.elevenchu.model.UnSetPayPasswordParam;
 import com.elevenchu.model.UpdateLoginParam;
 import com.elevenchu.model.UpdatePhoneParam;
@@ -356,6 +358,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             user.setAccessKeySecret("*********");
         });
         return list;
+    }
+
+    /**
+     * 通过用户的id批量查询用户的基础信息
+     * @param ids
+     * @return
+     */
+    @Override
+    public List<UserDto> getBasicUsers(List<Long> ids) {
+        if(CollectionUtils.isEmpty(ids)){
+            return Collections.emptyList();
+        }
+        List<User> list = list(new LambdaQueryWrapper<User>().in(User::getId,ids));
+        if(CollectionUtils.isEmpty(list)){
+            return Collections.emptyList();
+        }
+        //将user 转化成userDto
+        List<UserDto> userDtos=UserDtoMapper.INSTANCE.convert2Dto(list);
+
+          return userDtos;
+
     }
 
 
