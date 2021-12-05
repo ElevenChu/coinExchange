@@ -4,7 +4,7 @@ import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.config.IdAutoConfiguration;
 import com.elevenchu.domain.Sms;
@@ -409,10 +409,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = getUser(registerParam); 
         return save(user);
 
-
-        
     }
-
     private User getUser(RegisterParam registerParam) {
         User user = new User();
         user.setCountryCode(registerParam.getCountryCode());
@@ -436,5 +433,39 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         return user;
     }
+
+
+
+
+
+    /**
+     * 重置用户密码
+     * @param unSetPasswordParam
+     * @return
+     */
+    @Override
+    public boolean unsetLoginPwd(UnSetPasswordParam unSetPasswordParam) {
+        log.info("开始重置密码{}",JSON.toJSONString(unSetPasswordParam,true));
+        //1.极验校验
+        unSetPasswordParam.check(geetestLib,redisTemplate);
+        //2.手机号码校验
+        String validatePhoneCode = stringRedisTemplate.opsForValue().get("SMS:FORGOT_VERIFY:" + unSetPasswordParam.getMobile());
+        if(!unSetPasswordParam.getValidateCode().equals(validatePhoneCode)){
+            throw new IllegalArgumentException("手机校验码错误");
+        }
+        //3.数据库校验
+        String mobile = unSetPasswordParam.getMobile();
+        User user = getOne(new LambdaQueryWrapper<User>().eq(User::getMobile, mobile));
+        if (user==null){
+            throw new IllegalAccessError("用户名不存在");
+        }
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String encode = bCryptPasswordEncoder.encode(unSetPasswordParam.getPassword());
+        user.setPassword(encode);
+        return updateById(user);
+
+    }
+
+
 
 }

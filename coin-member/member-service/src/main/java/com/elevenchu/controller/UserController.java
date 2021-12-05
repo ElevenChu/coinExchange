@@ -316,8 +316,16 @@ public R updateLoginPwd(@RequestBody @Validated UpdateLoginParam updateLoginPara
 
     }
 
-
-
-
-
+    @PostMapping("/setPassword")
+    @ApiOperation(value = "用户重置密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "unSetPasswordParam", value = "unSetPasswordParam json")
+    })
+    public R unsetPassword(@RequestBody @Validated UnSetPasswordParam unSetPasswordParam) {
+        boolean isOk = userService.unsetLoginPwd(unSetPasswordParam);
+        if (isOk) {
+            return R.ok();
+        }
+        return R.fail("重置失败");
+    }
 }

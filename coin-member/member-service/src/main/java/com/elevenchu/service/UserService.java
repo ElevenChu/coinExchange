@@ -36,4 +36,6 @@ public interface UserService extends IService<User>{
     List<UserDto> getBasicUsers(List<Long> ids);
 
     boolean register(RegisterParam registerParam);
+
+    boolean unsetLoginPwd(UnSetPasswordParam unSetPasswordParam);
 }
