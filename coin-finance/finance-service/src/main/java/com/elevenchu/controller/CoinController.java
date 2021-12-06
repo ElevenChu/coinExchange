@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/coins")
 @Api("数字货币的数据接口")
@@ -71,5 +73,14 @@ public class CoinController {
 
     }
 
+    @GetMapping("/all")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "status",value = "币种当前的状态")
+    })
+    @ApiOperation(value = "通过状态查询所有的币种信息")
+    public R<List<Coin>> getCoinAll(Byte status){
+        List<Coin> coins =  coinService.getCoinsByStatus(status) ;
+        return R.ok(coins) ;
+    }
 
 }

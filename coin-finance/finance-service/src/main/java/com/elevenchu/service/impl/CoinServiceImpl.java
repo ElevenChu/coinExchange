@@ -25,4 +25,9 @@ public class CoinServiceImpl extends ServiceImpl<CoinMapper, Coin> implements Co
 
         );
     }
+
+    @Override
+    public List<Coin> getCoinsByStatus(Byte status) {
+        return list(new LambdaQueryWrapper<Coin>().eq(Coin::getStatus,status));
+    }
 }

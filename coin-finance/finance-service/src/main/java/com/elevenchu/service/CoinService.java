@@ -3,6 +3,9 @@ package com.elevenchu.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.Coin;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
+
 public interface CoinService extends IService<Coin>{
 
     /**
@@ -16,4 +19,6 @@ public interface CoinService extends IService<Coin>{
      * @return
      */
     Page<Coin> findByPage(String name, String type, Byte status, String title, String walletType, Page<Coin> page);
+
+    List<Coin> getCoinsByStatus(Byte status);
 }
