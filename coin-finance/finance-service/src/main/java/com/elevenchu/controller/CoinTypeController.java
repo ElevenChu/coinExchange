@@ -15,6 +15,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
+
 @RestController
 @Api(value = "币种类型控制器")
 @RequestMapping("/coinTypes")
@@ -78,7 +80,16 @@ public class CoinTypeController {
         return R.fail("修改失败") ;
     }
 
-
+    @GetMapping("/all")
+    @ApiOperation(value = "查询所有的币种类型")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "status",value = "币种的状态")
+    })
+    @PreAuthorize("hasAuthority('trade_coin_type_query')")
+    public R<List<CoinType>> findAllCoinTypeByStatus(Byte status){
+        List<CoinType> coinTypes = coinTypeService.listByStatus(status) ;
+        return R.ok(coinTypes) ;
+    }
 
     }
 
