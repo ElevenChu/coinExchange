@@ -5,4 +5,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface CoinConfigService extends IService<CoinConfig>{
 
 
+    CoinConfig findByCoinId(Long coinId);
 }
