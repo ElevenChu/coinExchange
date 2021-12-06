@@ -11,6 +11,7 @@
 
     <artifactId>coin-finance</artifactId>
     <packaging>pom</packaging>
+
     <modules>
         <module>finance-api</module>
         <module>finance-service</module>
