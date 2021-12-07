@@ -8,10 +8,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Api(tags = "币种配置的控制器")
@@ -30,5 +28,16 @@ public class CoinConfigController {
         return R.ok(coinConfig) ;
     }
 
-
+    @PatchMapping
+    @ApiOperation(value = "币种配置的修改操作")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "coinConfig" ,value ="coinConfig的json数据" )
+    })
+    public R  update(@RequestBody  @Validated CoinConfig coinConfig){
+        boolean saveOrUpdate  =  coinConfigService.updateById(coinConfig) ;
+        if(saveOrUpdate){
+            return R.ok() ;
+        }
+        return R.fail("修改失败") ;
+    }
 }

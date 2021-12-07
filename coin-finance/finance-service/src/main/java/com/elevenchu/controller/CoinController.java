@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -81,6 +82,35 @@ public class CoinController {
     public R<List<Coin>> getCoinAll(Byte status){
         List<Coin> coins =  coinService.getCoinsByStatus(status) ;
         return R.ok(coins) ;
+    }
+    @PatchMapping
+    @ApiOperation(value = "修改我们的币种的信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "coin" ,value = "coin的json数据")
+    })
+    public R update(@RequestBody @Validated Coin coin){
+        boolean updateById = coinService.updateById(coin);
+        if(updateById){
+            return R.ok() ;
+        }
+        return R.fail("修改失败") ;
+    }
+
+
+    @PostMapping
+    @ApiOperation(value = "新增我们的币种的信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "coin" ,value = "coin的json数据")
+    })
+    public R<Coin> save(@RequestBody @Validated  Coin coin){
+        coin.setStatus((byte)1);
+        boolean save = coinService.save(coin);
+        // coin新增成功后,会有Id ,这是mybatis-plus在新增成功后,
+        // 会自动的进行一个sql语句的查询,查询的结果就是id,之后把id设置给coin
+        if(save){
+            return R.ok(coin) ;
+        }
+        return R.fail("新增失败") ;
     }
 
 }
