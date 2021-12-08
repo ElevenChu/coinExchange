@@ -6,4 +6,6 @@ public interface CoinConfigService extends IService<CoinConfig>{
 
 
     CoinConfig findByCoinId(Long coinId);
+
+    boolean updateOrSave(CoinConfig coinConfig);
 }

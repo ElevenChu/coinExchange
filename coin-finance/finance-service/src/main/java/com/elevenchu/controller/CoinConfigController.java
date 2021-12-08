@@ -34,7 +34,7 @@ public class CoinConfigController {
             @ApiImplicitParam(name = "coinConfig" ,value ="coinConfig的json数据" )
     })
     public R  update(@RequestBody  @Validated CoinConfig coinConfig){
-        boolean saveOrUpdate  =  coinConfigService.updateById(coinConfig) ;
+        boolean saveOrUpdate  =  coinConfigService.updateOrSave(coinConfig) ;
         if(saveOrUpdate){
             return R.ok() ;
         }

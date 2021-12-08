@@ -1,6 +1,7 @@
 package com.elevenchu.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.elevenchu.domain.Coin;
 import com.elevenchu.service.CoinService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,28 @@ public class CoinConfigServiceImpl extends ServiceImpl<CoinConfigMapper, CoinCon
     public CoinConfig findByCoinId(Long coinId) {
         // coinConfig的id 和Coin的id 值是相同的
         return getOne(new LambdaQueryWrapper<CoinConfig>().eq(CoinConfig::getId, coinId));
+    }
+
+
+    @Override
+    public boolean updateOrSave(CoinConfig coinConfig) {
+        Coin coin = coinService.getById(coinConfig.getId());
+        if(coin==null){
+            throw new IllegalArgumentException("coin-id不存在");
+        }
+        coinConfig.setCoinType(coin.getType());
+        coinConfig.setName(coin.getName());
+        //判断新增或修改
+        CoinConfig config = getById(coinConfig.getId());
+        if(config==null){
+            //新增
+            return save(coinConfig);
+        }else{
+            //修改操作
+            return updateById(coinConfig);
+        }
+
+
     }
 
 }
