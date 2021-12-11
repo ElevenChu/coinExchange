@@ -160,4 +160,12 @@ public class CoinWithdraw {
     @TableField(value = "created")
     @ApiModelProperty(value="创建时间")
     private Date created;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "用户的名称")
+    private String username ;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "用户的真实名称")
+    private String realName ;
 }
