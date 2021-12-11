@@ -167,4 +167,13 @@ public class CashRecharge {
     @TableField(value = "last_time")
     @ApiModelProperty(value="最后确认到账时间。")
     private Date lastTime;
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "用户的名称")
+    private String username  ;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "用户的真实名称")
+    private String realName ;
 }
