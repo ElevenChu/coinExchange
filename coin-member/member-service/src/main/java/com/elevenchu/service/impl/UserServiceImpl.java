@@ -27,10 +27,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.elevenchu.mapper.UserMapper;
 import com.elevenchu.domain.User;
@@ -362,23 +361,38 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     /**
-     * 通过用户的id批量查询用户的基础信息
+     *
      * @param ids
+     *          用户的批量查询，用在我们给别人远程调用时批量获取用户的数据
+     * @param userName
+     *          使用用户名查询一系列用户的记录
+     * @param mobile
+     *          使用用户手机一系列用户的记录
      * @return
      */
     @Override
-    public List<UserDto> getBasicUsers(List<Long> ids) {
-        if(CollectionUtils.isEmpty(ids)){
-            return Collections.emptyList();
+    public Map<Long,UserDto> getBasicUsers(List<Long> ids,String userName,String mobile ) {
+        if(CollectionUtils.isEmpty(ids)&&StringUtils.isEmpty(userName)&&StringUtils.isEmpty(mobile)){
+            return Collections.emptyMap();
         }
-        List<User> list = list(new LambdaQueryWrapper<User>().in(User::getId,ids));
+        List<User> list = list(
+                new LambdaQueryWrapper<User>()
+                        .in(CollectionUtils.isEmpty(ids),User::getId,ids)
+                        .like(StringUtils.isEmpty(userName),User::getUsername,userName)
+                        .like(StringUtils.isEmpty(mobile),User::getMobile,mobile)
+
+        );
+
         if(CollectionUtils.isEmpty(list)){
-            return Collections.emptyList();
+            return Collections.emptyMap();
         }
+
+
         //将user 转化成userDto
         List<UserDto> userDtos=UserDtoMapper.INSTANCE.convert2Dto(list);
+        Map<Long, UserDto> userDtoIdMappings = userDtos.stream().collect(Collectors.toMap(UserDto::getId, userDto -> userDto));
 
-          return userDtos;
+        return userDtoIdMappings;
 
     }
 

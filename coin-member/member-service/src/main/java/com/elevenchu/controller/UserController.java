@@ -26,6 +26,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Api("会员的控制器")
@@ -300,8 +301,8 @@ public R updateLoginPwd(@RequestBody @Validated UpdateLoginParam updateLoginPara
      */
 
     @Override
-    public List<UserDto> getBasicUsers(List<Long> ids) {
-       List<UserDto> userDtos=userService.getBasicUsers(ids);
+    public Map<Long,UserDto> getBasicUsers(List<Long> ids,String userName,String mobile) {
+        Map<Long,UserDto> userDtos=userService.getBasicUsers(ids,userName,mobile);
         return userDtos;
     }
 

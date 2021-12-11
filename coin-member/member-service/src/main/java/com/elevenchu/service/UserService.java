@@ -7,6 +7,7 @@ import com.elevenchu.dto.UserDto;
 import com.elevenchu.model.*;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserService extends IService<User>{
 
@@ -33,7 +34,7 @@ public interface UserService extends IService<User>{
 
     List<User> getUserInvites(Long userId);
 
-    List<UserDto> getBasicUsers(List<Long> ids);
+    Map<Long,UserDto> getBasicUsers(List<Long> ids,String userName,String mobile);
 
     boolean register(RegisterParam registerParam);
 
