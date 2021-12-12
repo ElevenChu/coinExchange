@@ -2,17 +2,18 @@ package com.elevenchu.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.CashRecharge;
+import com.elevenchu.domain.CashRechargeAuditRecord;
 import com.elevenchu.model.R;
 import com.elevenchu.service.CashRechargeService;
 import com.elevenchu.util.ReportCsvUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.supercsv.cellprocessor.CellProcessorAdaptor;
@@ -192,7 +193,13 @@ public class CashRechargeController {
 
     }
 
-
+            @ApiOperation("现金的充值审核")
+            @PostMapping("/cashRechargeUpdateStatus")
+            public R cashRechargeUpdateStatus(@RequestBody  CashRechargeAuditRecord cashRechargeAuditRecord){
+                Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+               boolean isOk= cashRechargeService.cashRechargeAudit(userId,cashRechargeAuditRecord);
+               return isOk? R.ok():R.fail("审核失败");
+            }
 
 
 }
