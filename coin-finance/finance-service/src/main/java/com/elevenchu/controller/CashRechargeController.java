@@ -4,14 +4,27 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.CashRecharge;
 import com.elevenchu.model.R;
 import com.elevenchu.service.CashRechargeService;
+import com.elevenchu.util.ReportCsvUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.supercsv.cellprocessor.CellProcessorAdaptor;
+import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.util.CsvContext;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/cashRecharges")
@@ -49,7 +62,135 @@ public class CashRechargeController {
     }
 
 
+    @GetMapping("/records/export")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "coinId", value = "当前页"),
+            @ApiImplicitParam(name = "userId", value = "用户的ID"),
+            @ApiImplicitParam(name = "userName", value = "用户的名称"),
+            @ApiImplicitParam(name = "mobile", value = "用户的手机号"),
+            @ApiImplicitParam(name = "status", value = "充值的状态"),
+            @ApiImplicitParam(name = "numMin", value = "充值金额的最小值"),
+            @ApiImplicitParam(name = "numMax", value = "充值金额的最小值"),
+            @ApiImplicitParam(name = "startTime", value = "充值开始时间"),
+            @ApiImplicitParam(name = "endTime", value = "充值结束时间"),
+    })
+    public void recordsExport(Long coinId,
+                              Long userId, String userName, String mobile,
+                              Byte status, String numMin, String numMax,
+                              String startTime, String endTime) {
+        Page<CashRecharge> page = new Page<>(1, 10000);
+        Page<CashRecharge> pageData = cashRechargeService.findByPage(page, coinId, userId, userName,
+                mobile, status, numMin, numMax, startTime, endTime);
+        List<CashRecharge> records = pageData.getRecords();
+        if (!CollectionUtils.isEmpty(records)) {
+            String[] header = {"ID", "用户ID", "用户名", "真实用户名", "充值币种", "充值金额(USDT)", "手续费", "到账金额(CNY)", "充值方式", "充值订单", "参考号", "充值时间", "完成时间", "状态", "审核备注", "审核级数"};
+            String[] properties = {"id", "userId", "username", "realName", "coinName", "num", "fee", "mum", "type", "tradeno", "remark", "created", "lastTime", "status", "auditRemark", "step"};
 
+            CellProcessorAdaptor longToStringAdapter = new CellProcessorAdaptor() {
+                @Override
+                public <T> T execute(Object o, CsvContext csvContext) {
+                    return (T) String.valueOf(o);
+                }
+            };
+            // 对于金额,需要8位有效数字,金额
+            DecimalFormat decimalFormat = new DecimalFormat("0.00000000");
+
+
+            CellProcessorAdaptor moneyCellProcessorAdaptor = new CellProcessorAdaptor() {
+                @Override
+                public <T> T execute(Object o, CsvContext csvContext) {
+                    BigDecimal num = (BigDecimal) o;
+                    String numReal = decimalFormat.format(num);
+                    return (T) numReal;
+                }
+            };
+            //      @ApiModelProperty(value = "类型：alipay，支付宝；cai1pay，财易付；bank，银联；")
+            CellProcessorAdaptor typeAdapter = new CellProcessorAdaptor() {
+                @Override
+                public <T> T execute(Object o, CsvContext csvContext) {
+                    String type = String.valueOf(o);
+                    String typeName = "";
+                    switch (type) {
+                        case "alipay":
+                            typeName = "支付宝";
+                            break;
+                        case "cai1pay":
+                            typeName = "财易付";
+                            break;
+                        case "bank":
+                            typeName = "银联";
+                            break;
+                        case "linepay":
+                            typeName = "在线支付";
+                            break;
+                        default:
+                            typeName = "未知";
+                            break;
+
+                    }
+                    return (T) typeName;
+                }
+            };
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            CellProcessorAdaptor timeCellProcessorAdaptor = new CellProcessorAdaptor() {
+                @Override
+                public <T> T execute(Object o, CsvContext csvContext) {
+                    if(o ==null){
+                        return (T)"" ;
+                    }
+                    Date date = (Date) o;
+                    String dateStr = simpleDateFormat.format(date);
+                    return (T) dateStr;
+                }
+            };
+            // 0-待审核；1-审核通过；2-拒绝；3-充值成功
+            CellProcessorAdaptor statusCellProcessorAdaptor =  new CellProcessorAdaptor(){
+                @Override
+                public <T> T execute(Object o, CsvContext csvContext) {
+                    Integer status = Integer.valueOf(String.valueOf(o));
+                    String statusStr = "" ;
+                    switch (status){
+                        case 0:
+                            statusStr = "待审核" ;
+                            break;
+                        case 1:
+                            statusStr = "审核通过" ;
+                            break;
+                        case 2:
+                            statusStr = "拒绝" ;
+                            break;
+                        case 3:
+                            statusStr = "充值成功" ;
+                            break;
+                        default:
+                            statusStr = "未知" ;
+                            break;
+
+                    }
+                    return (T) statusStr;
+                }
+            };
+
+//            String[] header = {"ID", "用户ID", "用户名", "真实用户名", "充值币种", "充值金额(USDT)", "手续费", "到账金额(CNY)", "充值方式", "充值订单", "参考号", "充值时间", "完成时间", "状态", "审核备注", "审核级数"};
+            CellProcessor[] PROCESSOR = new CellProcessor[]{
+                    longToStringAdapter,  longToStringAdapter, null, null, null, // "ID", "用户ID", "用户名", "真实用户名", "充值币种",
+                    moneyCellProcessorAdaptor, moneyCellProcessorAdaptor, moneyCellProcessorAdaptor, typeAdapter,  // "充值金额(USDT)", "手续费", "到账金额(CNY)", 充值方式"
+                    null, null ,timeCellProcessorAdaptor , timeCellProcessorAdaptor ,//充值订单", "参考号", "充值时间", "完成时间
+                    statusCellProcessorAdaptor,   null ,null //状态 "审核备注", "审核级数"
+
+            };
+            ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+            try {
+                // 导出csv 文件
+                ReportCsvUtils.reportListCsv(requestAttributes.getResponse(), header, properties, "场外交易充值审核.csv", records, PROCESSOR);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
 
 
 
