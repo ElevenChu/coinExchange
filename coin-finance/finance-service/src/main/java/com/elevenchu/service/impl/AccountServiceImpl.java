@@ -54,6 +54,37 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         }
         return save;
     }
+
+    @Override
+    public Boolean decreaseAccountAmount(Long adminId, Long userId, Long coinId, Long orderNum, BigDecimal num, BigDecimal fee, String remark, String businessType, Byte direction) {
+        Account coinAccount = getCoinAccount(coinId, userId);
+        if (coinAccount == null) {
+            throw new IllegalArgumentException("账户不存在");
+        }
+        AccountDetail accountDetail = new AccountDetail();
+        accountDetail.setUserId(userId);
+        accountDetail.setCoinId(coinId);
+        accountDetail.setAmount(num);
+        accountDetail.setFee(fee);
+        accountDetail.setAccountId(coinAccount.getId());
+        accountDetail.setRefAccountId(coinAccount.getId());
+        accountDetail.setRemark(remark);
+        accountDetail.setBusinessType(businessType);
+        accountDetail.setDirection(direction);
+        boolean save = accountDetailService.save(accountDetail);
+        if (save) { // 新增了流水记录
+            BigDecimal balanceAmount = coinAccount.getBalanceAmount();
+            BigDecimal result = balanceAmount.add(num.multiply(BigDecimal.valueOf(-1)));
+            if (result.compareTo(BigDecimal.ONE) > 0) {
+                coinAccount.setBalanceAmount(result);
+                return updateById(coinAccount);
+            } else {
+                throw new IllegalArgumentException("余额不足");
+            }
+        }
+        return false;
+    }
+
     /**
      * 获取用户的某种币的资产
      *

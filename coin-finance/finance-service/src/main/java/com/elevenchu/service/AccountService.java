@@ -8,5 +8,7 @@ import java.math.BigDecimal;
 public interface AccountService extends IService<Account>{
 
 
-    Boolean transferAccountAmount(Long adminId, Long userId, Long coinId, Long id, BigDecimal num, BigDecimal fee, String remark, String businessType, Byte direction);
+    Boolean transferAccountAmount(Long adminId, Long userId, Long coinId, Long orderNum, BigDecimal num, BigDecimal fee, String remark, String businessType, Byte direction);
+
+    Boolean decreaseAccountAmount(Long adminId, Long userId, Long coinId, Long orderNum, BigDecimal num, BigDecimal fee, String remark, String businessType, Byte direction);
 }
