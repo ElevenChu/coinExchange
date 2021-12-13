@@ -2,6 +2,8 @@ package com.elevenchu.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.AdminBank;
+import com.elevenchu.dto.AdminBankDto;
+import com.elevenchu.feign.AdminBankServiceFeign;
 import com.elevenchu.model.R;
 import com.elevenchu.service.AdminBankService;
 import io.swagger.annotations.Api;
@@ -14,10 +16,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
+
 @RestController
 @Api("公司银行卡的配置")
 @RequestMapping("/adminBanks")
-public class AdminBankController {
+public class AdminBankController implements AdminBankServiceFeign {
     @Autowired
     private AdminBankService adminBankService;
     @GetMapping
@@ -82,4 +86,9 @@ public class AdminBankController {
     }
 
 
+    @Override
+    public List<AdminBankDto> getAllAdminBanks() {
+        List<AdminBankDto> adminBankDtos=adminBankService.getAllAdminBanks();
+        return adminBankDtos;
+    }
 }
