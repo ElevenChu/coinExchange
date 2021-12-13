@@ -2,6 +2,8 @@ package com.elevenchu.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.elevenchu.domain.AccountDetail;
+import com.elevenchu.domain.Coin;
+import com.elevenchu.domain.Config;
 import com.elevenchu.service.AccountDetailService;
 import com.elevenchu.service.CoinService;
 import com.elevenchu.service.ConfigService;
@@ -83,6 +85,27 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
             }
         }
         return false;
+    }
+
+    @Override
+    public Account findByUserAndCoin(Long userId, String coinName) {
+        Coin coin = coinService.getCoinByCoinName(coinName);
+        if (coin == null) {
+            throw new IllegalArgumentException("货币不存在");
+        }
+        Account account=getOne(new LambdaQueryWrapper<Account>().eq(Account::getCoinId,coin.getId())
+                                                                .eq(Account::getUserId,userId));
+        if (account == null) {
+            throw new IllegalArgumentException("该资产不存在");
+        }
+
+        Config sellRateConfig = configService.getConfigByCode("USDT2CNY");
+        account.setSellRate(new BigDecimal(sellRateConfig.getValue())); // 出售的费率
+
+        Config setBuyRateConfig = configService.getConfigByCode("CNY2USDT");
+        account.setBuyRate(new BigDecimal(setBuyRateConfig.getValue())); // 买进来的费率
+
+        return account;
     }
 
     /**

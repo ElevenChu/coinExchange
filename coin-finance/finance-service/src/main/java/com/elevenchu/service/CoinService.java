@@ -21,4 +21,6 @@ public interface CoinService extends IService<Coin>{
     Page<Coin> findByPage(String name, String type, Byte status, String title, String walletType, Page<Coin> page);
 
     List<Coin> getCoinsByStatus(Byte status);
+
+    Coin getCoinByCoinName(String coinName);
 }
