@@ -5,6 +5,7 @@ import com.alicp.jetcache.anno.CacheType;
 import com.alicp.jetcache.anno.CreateCache;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.elevenchu.domain.CashRecharge;
 import com.elevenchu.domain.CashWithdrawAuditRecord;
 import com.elevenchu.dto.UserDto;
 import com.elevenchu.feign.UserServiceFeign;
@@ -130,5 +131,13 @@ public class CashWithdrawalsServiceImpl extends ServiceImpl<CashWithdrawalsMappe
         });
 
         return isOk;
+    }
+
+    @Override
+    public Page<CashWithdrawals> findCashWithdrawals(Page<CashWithdrawals> page, Long userId, Byte status) {
+        return page(page, new LambdaQueryWrapper<CashWithdrawals>()
+                .eq(CashWithdrawals::getUserId, userId)
+                .eq(status != null, CashWithdrawals::getStatus, status)
+        );
     }
 }

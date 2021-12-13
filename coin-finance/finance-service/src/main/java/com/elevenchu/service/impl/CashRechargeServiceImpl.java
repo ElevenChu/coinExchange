@@ -35,8 +35,8 @@ public class CashRechargeServiceImpl extends ServiceImpl<CashRechargeMapper, Cas
     @Autowired
     private ConfigService configService;
 
-    @Autowired
-    private Snowflake snowflake;
+//    @Autowired
+//    private Snowflake snowflake;
 
     @CreateCache(name = "CASH_RECHARGE_LOCK:",expire = 100,timeUnit = TimeUnit.SECONDS,cacheType = CacheType.BOTH)
     private Cache<String,String> cache;
@@ -155,5 +155,13 @@ public class CashRechargeServiceImpl extends ServiceImpl<CashRechargeMapper, Cas
 
 
         return tryLockAndRun;
+    }
+
+    @Override
+    public Page<CashRecharge> findUserCashRecharge(Page<CashRecharge> page, Long userId, Byte status) {
+        return page(page, new LambdaQueryWrapper<CashRecharge>()
+                .eq(CashRecharge::getUserId, userId)
+                .eq(status != null, CashRecharge::getStatus, status)
+        );
     }
 }
