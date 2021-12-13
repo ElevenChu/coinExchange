@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.CashRecharge;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.elevenchu.domain.CashRechargeAuditRecord;
+import com.elevenchu.model.CashParam;
+import com.elevenchu.vo.CashTradeVo;
 
 public interface CashRechargeService extends IService<CashRecharge>{
 
@@ -13,4 +15,6 @@ public interface CashRechargeService extends IService<CashRecharge>{
     boolean cashRechargeAudit(Long userId, CashRechargeAuditRecord cashRechargeAuditRecord);
 
     Page<CashRecharge> findUserCashRecharge(Page<CashRecharge> page, Long userId, Byte status);
+
+    CashTradeVo buy(Long userId, CashParam cashParam);
 }
