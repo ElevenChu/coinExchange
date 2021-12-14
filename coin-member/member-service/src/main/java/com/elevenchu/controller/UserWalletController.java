@@ -12,10 +12,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
@@ -50,6 +48,24 @@ public class UserWalletController {
         List<UserWallet> userWallets = userWalletService.findUserWallets(userId, coinId);
         return R.ok(userWallets);
     }
+
+    @PostMapping
+    @ApiOperation(value = "新增一个提现地址")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userWallet" ,value = "userWallet json数据")
+    })
+    public R save(@RequestBody @Validated UserWallet userWallet){
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        userWallet.setUserId(userId);
+        boolean save = userWalletService.save(userWallet); // 交易密码的交易
+        if (save){
+            return R.ok() ;
+        }
+        return R.fail("新增提现地址失败") ;
+    }
+
+
+
 
 
 }

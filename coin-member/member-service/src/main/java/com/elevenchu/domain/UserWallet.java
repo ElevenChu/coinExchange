@@ -11,6 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 /**
     * 用户提币地址
     */
@@ -36,6 +39,7 @@ public class UserWallet {
      */
     @TableField(value = "coin_id")
     @ApiModelProperty(value="币种ID")
+    @NotNull
     private Long coinId;
 
     /**
@@ -50,6 +54,7 @@ public class UserWallet {
      */
     @TableField(value = "`name`")
     @ApiModelProperty(value="提币地址名称")
+    @NotBlank
     private String name;
 
     /**
@@ -57,6 +62,7 @@ public class UserWallet {
      */
     @TableField(value = "addr")
     @ApiModelProperty(value="地址")
+    @NotBlank
     private String addr;
 
     /**
@@ -86,4 +92,9 @@ public class UserWallet {
     @TableField(value = "created")
     @ApiModelProperty(value="创建时间")
     private Date created;
+
+    @TableField(exist = false)
+    @ApiModelProperty("交易密码")
+    @NotBlank
+    private String payPassword;
 }
