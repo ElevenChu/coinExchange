@@ -3,6 +3,9 @@ package com.elevenchu.controller;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.UserBank;
+import com.elevenchu.dto.UserBankDto;
+import com.elevenchu.feign.UserBankServiceFeign;
+import com.elevenchu.mappers.UserBankDtoMapper;
 import com.elevenchu.model.R;
 import com.elevenchu.service.UserBankService;
 import io.swagger.annotations.Api;
@@ -18,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Api("会员银行卡管理")
 @RequestMapping("/userBanks")
-public class UserBankController {
+public class UserBankController implements UserBankServiceFeign {
     @Autowired
     private UserBankService userBankService ;
     @GetMapping
@@ -88,6 +91,12 @@ public class UserBankController {
     }
 
 
+    @Override
+    public UserBankDto getUserBankInfo(Long userId) {
+        UserBank currentUserBank = userBankService.getCurrentUserBank(userId);
+        UserBankDto userBankDto = UserBankDtoMapper.INSTANCE.toConvertDto(currentUserBank);
 
 
+        return userBankDto;
+    }
 }
