@@ -13,4 +13,6 @@ public interface AccountService extends IService<Account>{
     Boolean decreaseAccountAmount(Long adminId, Long userId, Long coinId, Long orderNum, BigDecimal num, BigDecimal fee, String remark, String businessType, Byte direction);
 
     Account findByUserAndCoin(Long userId, String coinName);
+
+    void lockUserAmount(Long userId, Long coinId, BigDecimal mum, String type, Long orderId, BigDecimal fee);
 }

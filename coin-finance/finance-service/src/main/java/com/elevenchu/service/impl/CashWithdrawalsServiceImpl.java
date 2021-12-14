@@ -205,9 +205,11 @@ public class CashWithdrawalsServiceImpl extends ServiceImpl<CashWithdrawalsMappe
         cashWithdrawals.setTruename(userBankInfo.getRealName());
         cashWithdrawals.setRemark(remark);
         boolean save = save(cashWithdrawals);
+        if(save){
+            accountService.lockUserAmount(userId, cashWithdrawals.getCoinId(), cashWithdrawals.getMum(), "withdrawals_out", cashWithdrawals.getId(), cashWithdrawals.getFee());
+        }
 
-
-        return false;
+        return save;
     }
 
     private BigDecimal getCashWithdrawalsFee(BigDecimal amount) {

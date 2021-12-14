@@ -108,6 +108,39 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         return account;
     }
 
+    @Override
+    public void lockUserAmount(Long userId, Long coinId, BigDecimal mum, String type, Long orderId, BigDecimal fee) {
+        Account account = getOne(new LambdaQueryWrapper<Account>().eq(Account::getCoinId, coinId).eq(Account::getUserId, userId));
+        if (account == null) {
+            throw new IllegalArgumentException("您输入的资产类型不存在");
+        }
+        BigDecimal balanceAmount = account.getBalanceAmount();
+        if (balanceAmount.compareTo(mum) < 0) {
+            throw new IllegalArgumentException("账号的资金不足");
+        }
+        account.setBalanceAmount(balanceAmount.subtract(mum));
+        account.setFreezeAmount(account.getFreezeAmount().add(mum));
+        boolean updateById = updateById(account);
+        if (updateById) {  // 增加流水记录
+            AccountDetail accountDetail = new AccountDetail(
+                    null,
+                    userId,
+                    coinId,
+                    account.getId(),
+                    account.getId(), // 如果该订单时邀请奖励,有我们的ref的account ,否则,值和account 是一样的
+                    orderId,
+                    (byte) 2,
+                    type,
+                    mum,
+                    fee,
+                    "用户提现",
+                    null,
+                    null,
+                    null
+            );
+            accountDetailService.save(accountDetail);
+        }
+    }
     /**
      * 获取用户的某种币的资产
      *
