@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.CashWithdrawAuditRecord;
 import com.elevenchu.domain.CashWithdrawals;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.elevenchu.model.CashSellParam;
+
 public interface CashWithdrawalsService extends IService<CashWithdrawals>{
 
     //提现记录查询
@@ -12,4 +14,6 @@ public interface CashWithdrawalsService extends IService<CashWithdrawals>{
     boolean updateWithdrawalsStatus(Long userId, CashWithdrawAuditRecord cashWithdrawAuditRecord);
 
     Page<CashWithdrawals> findCashWithdrawals(Page<CashWithdrawals> page, Long userId, Byte status);
+
+    boolean sell(Long userId, CashSellParam cashSellParam);
 }

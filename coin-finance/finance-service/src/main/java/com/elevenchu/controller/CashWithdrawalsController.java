@@ -3,6 +3,7 @@ package com.elevenchu.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.CashWithdrawAuditRecord;
 import com.elevenchu.domain.CashWithdrawals;
+import com.elevenchu.model.CashSellParam;
 import com.elevenchu.model.R;
 import com.elevenchu.service.CashWithdrawalsService;
 import com.elevenchu.util.ReportCsvUtils;
@@ -13,6 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -184,5 +186,19 @@ public class CashWithdrawalsController {
         Page<CashWithdrawals> cashWithdrawalsPage = cashWithdrawalsService.findCashWithdrawals(page, userId, status);
         return R.ok(cashWithdrawalsPage);
     }
+    @PostMapping("/sell")
+    @ApiOperation(value = "GCN的卖出操作")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "", value = "")
+    })
+    public R<Object> sell(@RequestBody @Validated CashSellParam cashSellParam) {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        boolean isOk = cashWithdrawalsService.sell(userId, cashSellParam);
+        if (isOk) {
+            return R.ok("提交申请成功");
+        }
+        return R.fail("提交申请失败");
+    }
+
 
 }
