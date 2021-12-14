@@ -16,4 +16,9 @@ public class UserWalletServiceImpl extends ServiceImpl<UserWalletMapper, UserWal
     public Page<UserWallet> findByPage(Page<UserWallet> page, Long userId) {
         return page(page, new LambdaQueryWrapper<UserWallet>().eq(UserWallet::getUserId ,userId));
     }
+
+    @Override
+    public List<UserWallet> findUserWallets(Long userId, Long coinId) {
+        return list(new LambdaQueryWrapper<UserWallet>().eq(UserWallet::getCoinId,coinId).eq(UserWallet::getUserId,userId));
+    }
 }

@@ -11,10 +11,14 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.util.List;
 
 @RestController
 @Api(tags = "用户的提币地址")
@@ -36,5 +40,16 @@ public class UserWalletController {
         Page<UserWallet> userWalletPage = userWalletService.findByPage(page, userId);
         return R.ok(userWalletPage);
     }
+    @GetMapping("/getCoinAddress/{coinId}")
+    @ApiOperation(value = "查询用户某种币的提现地址")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "coinId" ,value = "币种的Id")
+    })
+    public R<List<UserWallet>> getCoinAddress(@PathVariable("coinId") Long coinId) {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        List<UserWallet> userWallets = userWalletService.findUserWallets(userId, coinId);
+        return R.ok(userWallets);
+    }
+
 
 }
