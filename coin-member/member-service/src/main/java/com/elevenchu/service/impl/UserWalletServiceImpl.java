@@ -41,4 +41,23 @@ public class UserWalletServiceImpl extends ServiceImpl<UserWalletMapper, UserWal
         }
         return super.save(entity);
     }
+
+    @Override
+    public boolean deleteUserWallet(Long addressId, String payPassword) {
+        UserWallet userWallet = getById(addressId);
+        if(userWallet==null){
+            throw new IllegalArgumentException("提现地址错误");
+        }
+        Long userId = userWallet.getUserId();
+        User user = userService.getById(userId);
+        if(user==null){
+            throw new IllegalArgumentException("用户不存在");
+        }
+        String paypassword = user.getPaypassword();
+        if(StringUtils.isEmpty(payPassword)||!(new BCryptPasswordEncoder().matches(payPassword,paypassword))){
+            throw new IllegalArgumentException("交易密码错误");
+        }
+
+        return super.removeById(addressId);
+    }
 }

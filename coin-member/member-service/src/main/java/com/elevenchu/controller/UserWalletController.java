@@ -64,7 +64,19 @@ public class UserWalletController {
         return R.fail("新增提现地址失败") ;
     }
 
-
+    @PostMapping("/deleteAddress")
+    @ApiOperation(value = "删除某个用户的提现地址")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "addressId" ,value = "提现地址的ID" ) ,
+            @ApiImplicitParam(name = "payPassword" ,value = "交易密码")
+    })
+    public R delete(@RequestParam(required = true) Long addressId ,@RequestParam(required = true) String payPassword){
+        boolean isOk =  userWalletService.deleteUserWallet(addressId,payPassword) ;
+        if(isOk){
+            return R.ok("删除成功") ;
+        }
+        return R.fail("删除失败") ;
+    }
 
 
 

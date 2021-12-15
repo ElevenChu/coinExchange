@@ -14,4 +14,5 @@ public interface UserWalletService extends IService<UserWallet>{
     List<UserWallet> findUserWallets(Long userId, Long coinId);
     boolean save(UserWallet entity);
 
+    boolean deleteUserWallet(Long addressId, String payPassword);
 }
