@@ -3,6 +3,7 @@ package com.elevenchu.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.Coin;
 import com.baomidou.mybatisplus.extension.service.IService;
+import dto.CoinDto;
 
 import java.util.List;
 
@@ -23,4 +24,6 @@ public interface CoinService extends IService<Coin>{
     List<Coin> getCoinsByStatus(Byte status);
 
     Coin getCoinByCoinName(String coinName);
+
+    List<CoinDto> findList(List<Long> coinIds);
 }

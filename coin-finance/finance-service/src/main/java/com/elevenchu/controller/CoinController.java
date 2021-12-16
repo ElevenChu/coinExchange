@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.Coin;
 import com.elevenchu.model.R;
 import com.elevenchu.service.CoinService;
+import dto.CoinDto;
+import feign.CoinServiceFeign;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -18,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/coins")
 @Api("数字货币的数据接口")
-public class CoinController {
+public class CoinController implements CoinServiceFeign {
     @Autowired
     private CoinService coinService ;
 
@@ -113,4 +115,11 @@ public class CoinController {
         return R.fail("新增失败") ;
     }
 
+    @Override
+    public List<CoinDto> findCoins(List<Long> coinIds) {
+     List<CoinDto> coinDtos=   coinService.findList(coinIds);
+     return coinDtos;
+
+
+    }
 }

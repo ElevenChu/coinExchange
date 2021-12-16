@@ -61,6 +61,15 @@
             <artifactId>super-csv</artifactId>
             <version>${csv.version}</version>
         </dependency>
+        <!--mapStruct依赖 高性能对象映射-->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-jdk8</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
