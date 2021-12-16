@@ -1,15 +1,14 @@
 package com.elevenchu.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotBlank;
 
 /**
     * 交易区
@@ -32,6 +31,7 @@ public class TradeArea {
      */
     @TableField(value = "`name`")
     @ApiModelProperty(value="交易区名称")
+    @NotBlank
     private String name;
 
     /**
@@ -39,6 +39,7 @@ public class TradeArea {
      */
     @TableField(value = "code")
     @ApiModelProperty(value="交易区代码")
+    @NotBlank
     private String code;
 
     /**
@@ -86,14 +87,14 @@ public class TradeArea {
     /**
      * 修改时间
      */
-    @TableField(value = "last_update_time")
+    @TableField(value = "last_update_time",fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty(value="修改时间")
     private Date lastUpdateTime;
 
     /**
      * 创建时间
      */
-    @TableField(value = "created")
+    @TableField(value = "created",fill=FieldFill.INSERT)
     @ApiModelProperty(value="创建时间")
     private Date created;
 }

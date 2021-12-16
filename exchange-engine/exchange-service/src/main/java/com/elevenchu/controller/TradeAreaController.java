@@ -10,9 +10,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
@@ -35,4 +33,47 @@ public class TradeAreaController {
         Page<TradeArea> pageData = tradeAreaService.findByPage(page, name, status);
         return R.ok(pageData);
     }
+    @PostMapping
+    @ApiOperation(value = "新增一个交易区域")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tradeArea", value = "tradeAreajson")
+    })
+    @PreAuthorize("hasAuthority('trade_area_create')")
+    public R save(@RequestBody TradeArea tradeArea) {
+        boolean save = tradeAreaService.save(tradeArea);
+        if (save) {
+            return R.ok();
+        }
+        return R.fail("新增失败");
+    }
+
+    @PatchMapping
+    @ApiOperation(value = "修改一个交易区域")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tradeArea", value = "tradeAreajson")
+    })
+    @PreAuthorize("hasAuthority('trade_area_update')")
+    public R update(@RequestBody TradeArea tradeArea) {
+        boolean update = tradeAreaService.updateById(tradeArea);
+        if (update) {
+            return R.ok();
+        }
+        return R.fail("修改失败");
+    }
+
+
+    @PostMapping("/status")
+    @ApiOperation(value = "修改一个交易区域的状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tradeArea", value = "tradeAreajson")
+    })
+    @PreAuthorize("hasAuthority('trade_area_update')")
+    public R updateStatus(@RequestBody TradeArea tradeArea) {
+        boolean update = tradeAreaService.updateById(tradeArea);
+        if (update) {
+            return R.ok();
+        }
+        return R.fail("修改失败");
+    }
+
 }
