@@ -2,6 +2,7 @@ package com.elevenchu.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.elevenchu.domain.CoinRecharge;
 import com.elevenchu.dto.UserDto;
 import com.elevenchu.feign.UserServiceFeign;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,5 +87,12 @@ public class CoinWithdrawServiceImpl extends ServiceImpl<CoinWithdrawMapper, Coi
             });
         }
         return coinWithdrawPage ;
+    }
+
+    @Override
+    public Page<CoinWithdraw> findUserCoinWithdraw(Long userId, Long coinId, Page<CoinWithdraw> page) {
+
+        return page(page,new LambdaQueryWrapper<CoinWithdraw>().eq(coinId!=null,CoinWithdraw::getCoinId,coinId)
+                .eq(CoinWithdraw::getUserId,userId));
     }
 }
