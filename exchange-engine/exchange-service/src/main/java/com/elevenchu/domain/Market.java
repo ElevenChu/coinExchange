@@ -203,7 +203,7 @@ public class Market {
      */
     @TableField(value = "`status`")
     @ApiModelProperty(value="状态,0禁用,1启用")
-    private Boolean status;
+    private Integer status;
 
     /**
      * 福汇API交易对
