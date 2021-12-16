@@ -7,7 +7,9 @@ import com.elevenchu.service.CoinRechargeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,6 +47,15 @@ public class CoinRechargeController {
                 mobile, status, numMin, numMax, startTime, endTime);
         return R.ok(pageData);
     }
+
+    @GetMapping("/user/record")
+    @ApiOperation("查询用户某种币的Id")
+    public R<Page<CoinRecharge>> findUserCoinRecharge(@ApiIgnore Page<CoinRecharge> page,Long coinId){
+        Long userId=Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        Page<CoinRecharge> pageData= coinRechargeService.findUserCoinRecharge(page,coinId,userId);
+        return R.ok(pageData);
+    }
+
 
 
 }
