@@ -19,4 +19,11 @@ public class TradeAreaServiceImpl extends ServiceImpl<TradeAreaMapper, TradeArea
         return page(page,new LambdaQueryWrapper<TradeArea>().eq(status!=null,TradeArea::getStatus,status)
                                                             .like(!StringUtils.isEmpty(name),TradeArea::getName,name)             );
     }
+
+    @Override
+    public List<TradeArea> findAll(Byte status) {
+        return list(new LambdaQueryWrapper<TradeArea>().eq(status!=null,TradeArea::getStatus,status));
+    }
+
+
 }

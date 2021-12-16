@@ -13,6 +13,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/tradeAreas")
 @Api(tags = "交易区域的数据接口")
@@ -75,5 +77,18 @@ public class TradeAreaController {
         }
         return R.fail("修改失败");
     }
+
+    @GetMapping("/all")
+    @ApiOperation(value = "查询交易区域")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "status", value = "交易区域的状态")
+    })
+    @PreAuthorize("hasAuthority('trade_area_query')")
+    public R<List<TradeArea>> findAll(Byte status) {
+        List<TradeArea> tradeAreas = tradeAreaService.findAll(status);
+        return R.ok(tradeAreas);
+    }
+
+
 
 }
