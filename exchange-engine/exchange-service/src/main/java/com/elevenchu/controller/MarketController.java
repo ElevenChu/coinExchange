@@ -10,9 +10,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
@@ -35,7 +33,34 @@ public class MarketController {
         return R.ok(pageData);
     }
 
+    @PostMapping("/setStatus")
+    @ApiOperation(value = "启用/禁用交易市场")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "market", value = "market的json数据")
+    })
+    @PreAuthorize("hasAuthority('trade_market_update')")
+    public R setStatus(@RequestBody Market market){
 
+        boolean updateById = marketService.updateById(market);
+        if (updateById) {
 
+            return R.ok();
+        }
+        return R.fail("状态设置失败");
+    }
+
+    @PostMapping
+    @ApiOperation(value = "新增一个市场")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "market", value = "market json")
+    })
+    @PreAuthorize("hasAuthority('trade_market_create')")
+    public R save(@RequestBody Market market) {
+        boolean save = marketService.save(market);
+        if (save) {
+            return R.ok();
+        }
+        return R.fail("新增失败");
+    }
 
 }

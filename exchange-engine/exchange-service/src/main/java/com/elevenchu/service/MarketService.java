@@ -7,4 +7,5 @@ public interface MarketService extends IService<Market>{
 
 
     Page<Market> findByPage(Page<Market> page, Long tradeAreaId, Byte status);
+
 }

@@ -117,7 +117,7 @@ public class CoinController implements CoinServiceFeign {
 
     @Override
     public List<CoinDto> findCoins(List<Long> coinIds) {
-     List<CoinDto> coinDtos=   coinService.findList(coinIds);
+     List<CoinDto> coinDtos= coinService.findList(coinIds);
      return coinDtos;
 
 
