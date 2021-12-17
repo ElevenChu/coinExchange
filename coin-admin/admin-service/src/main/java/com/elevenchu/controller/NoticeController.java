@@ -112,5 +112,32 @@ public class NoticeController {
         return  R.fail("修改公告失败") ;
 
     }
+    /**
+     * simple 就是给用户/会员看的
+     *
+     */
+
+
+    @GetMapping("/simple")
+    @ApiOperation(value = "查询前台展示的notice")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current",value = "当前页") ,
+            @ApiImplicitParam(name = "size",value = "每页显示的条数")
+    })
+    public R<Page<Notice>> findNoticeForSimple(Page<Notice> page){
+        Page<Notice> pageData =   noticeService.findNoticeForSimple(page) ;
+        return R.ok(pageData) ;
+    }
+
+    @GetMapping("/simple/{id}")
+    @ApiOperation(value = "查询某条Notice的详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id",value = "notice的id")
+    })
+    public R<Notice> noticeSimpleInfo(@PathVariable("id")Long id){
+        Notice notice = noticeService.getById(id);
+        return R.ok(notice);
+    }
+
 
 }
