@@ -7,4 +7,6 @@ public interface WorkIssueService extends IService<WorkIssue>{
 
 
     Page<WorkIssue> findByPage(Page<WorkIssue> page, Integer status, String startTime, String endTime);
+
+    Page<WorkIssue> getIssueList(Page<WorkIssue> page, Long userId);
 }

@@ -12,10 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
@@ -60,5 +57,34 @@ public class WorkIssueController {
             return R.ok() ;
         }
         return R.fail("回复失败") ;
+    }
+
+    @GetMapping("/issueList")
+    @ApiOperation(value = "前台查询工单")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current" ,value = "当前页"),
+            @ApiImplicitParam(name = "size" ,value = "显示的条数")
+    })
+    public R<Page<WorkIssue>> getIssueList(@ApiIgnore Page<WorkIssue> page){
+        String userIdStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        Page<WorkIssue> pageData =  workIssueService.getIssueList(page,Long.valueOf(userIdStr)) ;
+        return R.ok(pageData) ;
+    }
+
+
+    @PostMapping("/addWorkIssue")
+    @ApiOperation(value = "会员添加问题")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "workIssue" , value = "workIssue的json,只包含questions")
+    })
+    public R addWorkIssue(@RequestBody  WorkIssue workIssue){
+        String userIdStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        workIssue.setUserId(Long.valueOf(userIdStr)); // 设置用户的Id
+        workIssue.setStatus(1); // 设置状态
+        boolean save = workIssueService.save(workIssue);
+        if(save){
+            return R.ok("提交成功") ;
+        }
+        return R.fail("提交失败") ;
     }
 }
