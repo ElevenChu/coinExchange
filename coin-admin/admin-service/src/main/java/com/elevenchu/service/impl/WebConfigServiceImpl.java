@@ -22,4 +22,12 @@ public class WebConfigServiceImpl extends ServiceImpl<WebConfigMapper, WebConfig
 
         )  ;
     }
+
+    @Override
+    public List<WebConfig> getPcBanners() {
+        return list(new LambdaQueryWrapper<WebConfig>()
+                                   .eq(WebConfig::getType,"WEB_BANNER")
+                                     .eq(WebConfig::getStatus,1)
+                                      .orderByAsc(WebConfig::getSort));
+    }
 }

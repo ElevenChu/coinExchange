@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @Api("WebConfig的控制器")
@@ -82,6 +83,14 @@ public class WebConfigController {
             return R.ok() ;
         }
         return R.fail("删除失败") ;
+    }
+
+
+    @GetMapping("/banners")
+    @ApiOperation("获取PC端的banner图")
+    public R<List<WebConfig>> banners(){
+        List<WebConfig> banners=webConfigService.getPcBanners();
+        return R.ok(banners);
     }
     
 }
