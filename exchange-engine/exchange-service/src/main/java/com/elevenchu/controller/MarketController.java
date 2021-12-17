@@ -13,6 +13,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/markets")
 @Api(tags = "交易市场的控制器")
@@ -62,5 +64,32 @@ public class MarketController {
         }
         return R.fail("新增失败");
     }
+
+    @PatchMapping
+    @ApiOperation(value = "修改一个市场")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "market", value = "marketjson")
+    })
+    @PreAuthorize("hasAuthority('trade_market_update')")
+    public R update(@RequestBody Market market) {
+        boolean updateById = marketService.updateById(market);
+        if (updateById) {
+            return R.ok();
+        }
+        return R.fail("修改失败");
+    }
+
+
+
+    @GetMapping("/all")
+    @ApiOperation(value = "查询所有的交易市场")
+    public R<List<Market>> listMarks() {
+        return R.ok(marketService.list());
+    }
+
+
+
+
+
 
 }
