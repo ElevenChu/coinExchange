@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.TradeArea;
 import com.elevenchu.model.R;
 import com.elevenchu.service.TradeAreaService;
+import com.elevenchu.vo.TradeAreaMarketVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -88,7 +89,11 @@ public class TradeAreaController {
         List<TradeArea> tradeAreas = tradeAreaService.findAll(status);
         return R.ok(tradeAreas);
     }
-
-
+    @GetMapping("/markets")
+    @ApiOperation("查询交易区域，以及 区域下的市场")
+    public R<List<TradeAreaMarketVo>> getTradeAreaMarkets(){
+        List<TradeAreaMarketVo> tradeAreaMarketVos=  tradeAreaService.findTradeAreaMarket();
+        return  R.ok(tradeAreaMarketVos);
+    }
 
 }

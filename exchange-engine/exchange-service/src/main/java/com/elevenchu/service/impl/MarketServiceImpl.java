@@ -4,9 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import dto.CoinDto;
 import feign.CoinServiceFeign;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -21,7 +22,7 @@ import java.util.List;
 
 @Service
 public class MarketServiceImpl extends ServiceImpl<MarketMapper, Market> implements MarketService{
-   @Autowired
+    @Resource
     private CoinServiceFeign coinServiceFeign;
 
 
@@ -30,6 +31,12 @@ public class MarketServiceImpl extends ServiceImpl<MarketMapper, Market> impleme
     public Page<Market> findByPage(Page<Market> page, Long tradeAreaId, Byte status) {
         return page(page,new LambdaQueryWrapper<Market>().eq(tradeAreaId!=null,Market::getTradeAreaId,tradeAreaId)
         .eq(status!=null,Market::getStatus,status));
+    }
+
+    @Override
+    public List<Market> getMarketsByTradeAreaId(Long id) {
+
+        return list(new LambdaQueryWrapper<Market>().eq(Market::getId,id).eq(Market::getStatus,1).orderByAsc(Market::getSort));
     }
 
     @Override
