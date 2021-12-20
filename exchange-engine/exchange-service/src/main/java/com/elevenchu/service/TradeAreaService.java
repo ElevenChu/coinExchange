@@ -15,4 +15,6 @@ public interface TradeAreaService extends IService<TradeArea>{
     List<TradeArea> findAll(Byte status);
 
     List<TradeAreaMarketVo> findTradeAreaMarket();
+
+    List<TradeAreaMarketVo> getUserFavoriteMarkets(Long userId);
 }

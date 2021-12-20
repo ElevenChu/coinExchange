@@ -3,11 +3,12 @@ package com.elevenchu.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.Market;
+import com.elevenchu.domain.UserFavoriteMarket;
 import com.elevenchu.service.MarketService;
+import com.elevenchu.service.UserFavoriteMarketService;
 import com.elevenchu.vo.MergeDeptVo;
 import com.elevenchu.vo.TradeAreaMarketVo;
 import com.elevenchu.vo.TradeMarketVo;
-import com.sun.xml.bind.v2.TODO;
 import dto.CoinDto;
 import feign.CoinServiceFeign;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ public class TradeAreaServiceImpl extends ServiceImpl<TradeAreaMapper, TradeArea
 
     @Resource
     private CoinServiceFeign coinServiceFeign;
+
+    @Autowired
+    private UserFavoriteMarketService userFavoriteMarketService;
 
 
 
@@ -74,6 +78,25 @@ public class TradeAreaServiceImpl extends ServiceImpl<TradeAreaMapper, TradeArea
 
 
         return tradeAreaMarketVos;
+    }
+
+    @Override
+    public List<TradeAreaMarketVo> getUserFavoriteMarkets(Long userId) {
+        List<UserFavoriteMarket> userFavoriteMarkets = userFavoriteMarketService.list(new LambdaQueryWrapper<UserFavoriteMarket>().eq(UserFavoriteMarket::getUserId, userId));
+        if(CollectionUtils.isEmpty(userFavoriteMarkets)){
+            return Collections.emptyList() ;
+        }
+        List<Long> marketIds = userFavoriteMarkets.stream().map(UserFavoriteMarket::getMarketId).collect(Collectors.toList());
+        //创建一个TradeAreaMarketVo
+        TradeAreaMarketVo tradeAreaMarketVo=new TradeAreaMarketVo();
+        tradeAreaMarketVo.setAreaName("自选");
+        List<Market> markets = marketService.listByIds(marketIds);
+        List<TradeMarketVo> tradeMarketVos = market2marketVos(markets);
+        tradeAreaMarketVo.setMarkets(tradeMarketVos);
+        return Arrays.asList(tradeAreaMarketVo);
+
+
+
     }
 
     private List<TradeMarketVo> market2marketVos(List<Market> markets) {

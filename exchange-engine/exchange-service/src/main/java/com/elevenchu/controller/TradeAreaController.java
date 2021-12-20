@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -95,5 +96,16 @@ public class TradeAreaController {
         List<TradeAreaMarketVo> tradeAreaMarketVos=  tradeAreaService.findTradeAreaMarket();
         return  R.ok(tradeAreaMarketVos);
     }
+
+
+    @GetMapping("/market/favorite")
+    @ApiOperation(value = "用户收藏的交易市场")
+    public R<List<TradeAreaMarketVo>> getUserFavoriteMarkets(){
+        Long userId =  Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        List<TradeAreaMarketVo> tradeAreaMarketVos =  tradeAreaService.getUserFavoriteMarkets(userId) ;
+        return R.ok(tradeAreaMarketVos) ;
+    }
+
+
 
 }
