@@ -12,4 +12,6 @@ public interface MarketService extends IService<Market>{
     Page<Market> findByPage(Page<Market> page, Long tradeAreaId, Byte status);
 
     List<Market> getMarketsByTradeAreaId(Long id);
+
+    Market getMarkerBySymbol(String symbol);
 }
