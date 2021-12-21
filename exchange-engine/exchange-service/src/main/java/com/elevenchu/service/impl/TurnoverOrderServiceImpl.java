@@ -30,4 +30,15 @@ public class TurnoverOrderServiceImpl extends ServiceImpl<TurnoverOrderMapper, T
                 .eq(TurnoverOrder::getSellUserId, userId)
         );
     }
+
+    @Override
+    public List<TurnoverOrder> findBySymbol(String symbol) {
+        List<TurnoverOrder> turnoverOrders=list(new LambdaQueryWrapper<TurnoverOrder>()
+                        .eq(TurnoverOrder::getSymbol,symbol)
+                        .orderByDesc(TurnoverOrder::getCreated)
+                        .eq(TurnoverOrder::getStatus,1)
+                        .last("limit 60"));
+
+        return turnoverOrders;
+    }
 }

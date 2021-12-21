@@ -2,20 +2,27 @@ package com.elevenchu.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.Market;
+import com.elevenchu.domain.TurnoverOrder;
 import com.elevenchu.dto.MarketDto;
 import com.elevenchu.feign.MarketServiceFeign;
+import com.elevenchu.mappers.MarketDtoMappers;
 import com.elevenchu.model.R;
 import com.elevenchu.service.MarketService;
+import com.elevenchu.service.TurnoverOrderService;
+import com.elevenchu.vo.DepthItemVo;
+import com.elevenchu.vo.DepthsVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/markets")
@@ -23,6 +30,9 @@ import java.util.List;
 public class MarketController implements MarketServiceFeign {
     @Autowired
     private MarketService marketService;
+    @Autowired
+    private TurnoverOrderService turnoverOrderService;
+
 
 
     @GetMapping
@@ -95,5 +105,41 @@ public class MarketController implements MarketServiceFeign {
     MarketDto marketDto= marketService.findByCoinId(buyCoinId,sellCoinId);
 
         return marketDto;
+
+ }
+
+
+
+    @ApiOperation(value = "通过的交易对以及深度查询当前的市场的深度数据")
+    @GetMapping("/depth/{symbol}/{dept}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "symbol", value = "交易对"),
+            @ApiImplicitParam(name = "dept", value = "深度类型"),
+    })
+    public R<DepthsVo> findDeptVosSymbol(@PathVariable("symbol") String symbol, @PathVariable("dept") String dept) {
+        // 交易市场
+        Market market = marketService.getMarkerBySymbol(symbol);
+
+        DepthsVo depthsVo = new DepthsVo();
+        depthsVo.setCnyPrice(market.getOpenPrice()); // CNY的价格
+        depthsVo.setPrice(market.getOpenPrice()); // GCN的价格
+//        Map<String, List<DepthItemVo>> depthMap = orderBooksFeignClient.querySymbolDepth(symbol);//TODO
+//        if (!CollectionUtils.isEmpty(depthMap)) {
+//            depthsVo.setAsks(depthMap.get("asks"));
+//            depthsVo.setBids(depthMap.get("bids"));
+//        }
+        return R.ok(depthsVo);
+
     }
+
+
+    @ApiOperation(value = "查询成交记录")
+    @GetMapping("/trades/{symbol}")
+    public R<List<TurnoverOrder>> findSymbolTurnoverOrder(@PathVariable("symbol") String symbol) {
+        List<TurnoverOrder> turnoverOrders = turnoverOrderService.findBySymbol(symbol);
+        return R.ok(turnoverOrders);
+    }
+
+
+
 }

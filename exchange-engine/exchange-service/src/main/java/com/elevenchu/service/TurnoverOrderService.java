@@ -14,4 +14,6 @@ public interface TurnoverOrderService extends IService<TurnoverOrder>{
     List<TurnoverOrder> getBuyTurnoverOrder(Long id, Long userId);
 
     List<TurnoverOrder> getSellTurnoverOrder(Long id, Long userId);
+
+    List<TurnoverOrder> findBySymbol(String symbol);
 }
