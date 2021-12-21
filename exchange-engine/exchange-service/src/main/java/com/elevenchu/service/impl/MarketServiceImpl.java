@@ -2,6 +2,8 @@ package com.elevenchu.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.elevenchu.dto.MarketDto;
+import com.elevenchu.mappers.MarketDtoMappers;
 import dto.CoinDto;
 import feign.CoinServiceFeign;
 
@@ -42,6 +44,20 @@ public class MarketServiceImpl extends ServiceImpl<MarketMapper, Market> impleme
     @Override
     public Market getMarkerBySymbol(String symbol) {
         return getOne(new LambdaQueryWrapper<Market>().eq(Market::getSymbol,symbol));
+    }
+
+    @Override
+    public MarketDto findByCoinId(Long buyCoinId, Long sellCoinId) {
+        LambdaQueryWrapper<Market> eq = new LambdaQueryWrapper<Market>()
+                .eq(Market::getBuyCoinId, buyCoinId)
+                .eq(Market::getSellCoinId, sellCoinId)
+                .eq(Market::getStatus, 1);
+        Market one = getOne(eq);
+        if (one == null) {
+            return null;
+        }
+        MarketDto marketDto = MarketDtoMappers.INSTANCE.toConvertDto(one);
+        return marketDto;
     }
 
     @Override

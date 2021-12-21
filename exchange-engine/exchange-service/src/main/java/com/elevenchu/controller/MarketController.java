@@ -2,6 +2,8 @@ package com.elevenchu.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.Market;
+import com.elevenchu.dto.MarketDto;
+import com.elevenchu.feign.MarketServiceFeign;
 import com.elevenchu.model.R;
 import com.elevenchu.service.MarketService;
 import io.swagger.annotations.Api;
@@ -18,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/markets")
 @Api(tags = "交易市场的控制器")
-public class MarketController {
+public class MarketController implements MarketServiceFeign {
     @Autowired
     private MarketService marketService;
 
@@ -88,8 +90,10 @@ public class MarketController {
     }
 
 
+    @Override
+    public MarketDto findByCoinId(Long buyCoinId, Long sellCoinId) {
+    MarketDto marketDto= marketService.findByCoinId(buyCoinId,sellCoinId);
 
-
-
-
+        return marketDto;
+    }
 }
