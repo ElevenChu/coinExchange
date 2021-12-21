@@ -3,7 +3,9 @@ package com.elevenchu.controller;
 import com.elevenchu.domain.Account;
 import com.elevenchu.model.R;
 import com.elevenchu.service.AccountService;
+import com.elevenchu.vo.UserTotalAccountVo;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,16 @@ public class AccountController {
         Account account = accountService.findByUserAndCoin(userId, coinName);
             return R.ok(account);
     }
+
+    @GetMapping("/total")
+    @ApiOperation(value = "计算用户的总资产")
+    public R<UserTotalAccountVo> total() {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        UserTotalAccountVo userTotalAccountVo = accountService.getUserTotalAccount(userId);
+        return R.ok(userTotalAccountVo);
+    }
+
+
 
 
 }
