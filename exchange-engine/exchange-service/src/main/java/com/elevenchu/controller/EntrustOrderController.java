@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.EntrustOrder;
 import com.elevenchu.model.R;
 import com.elevenchu.service.EntrustOrderService;
+import com.elevenchu.vo.TradeEntrustOrderVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -11,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
@@ -35,7 +37,22 @@ public class EntrustOrderController {
         Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString()) ;
         Page<EntrustOrder> entrustOrderPage = entrustOrderService.findByPage(page,userId,symbol,type) ;
         return R.ok(entrustOrderPage) ;
+
+
     }
+
+    @GetMapping("/history/{symbol}")
+    @ApiOperation(value = "查询历史的委托单记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current",value = "当前页") ,
+            @ApiImplicitParam(name = "size",value = "条数") ,
+    })
+    public R<Page<TradeEntrustOrderVo>> historyEntrustOrder(@ApiIgnore Page<EntrustOrder> page , @PathVariable("symbol") String symbol){
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString()) ;
+        Page<TradeEntrustOrderVo> pageData = entrustOrderService.getHistoryEntrustOrder(page,symbol,userId) ;
+        return R.ok(pageData) ;
+    }
+
 
 
 
