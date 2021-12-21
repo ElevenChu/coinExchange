@@ -10,10 +10,14 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.util.List;
 
 @RestController
 @Api(tags = "用户钱包地址")
@@ -34,6 +38,23 @@ public class UserAddressController {
         page.addOrder(OrderItem.desc("last_update_time")) ;
         Page<UserAddress> userAddressPage = userAddressService.findByPage(page,userId) ;
         return R.ok(userAddressPage) ;
+    }
+
+    @GetMapping("getCoinAddress/{coinId}")
+    @ApiOperation("查询用户某种币的钱包地址")
+    public R<String> getCoinAddress(@PathVariable("coinId") Long coinId){
+        String userId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        UserAddress userAddress = userAddressService.getUserAddressByUserIdAndCoinId(userId,coinId) ;
+        return R.ok(userAddress.getAddress()) ;
+
+    }
+
+
+    @GetMapping("/current")
+    public R getCurrentUserAddress(){
+        String userId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        List<UserAddress> userAddressList = userAddressService.getUserAddressByUserId(Long.valueOf(userId)) ;
+        return R.ok(userAddressList) ;
     }
 
 }
