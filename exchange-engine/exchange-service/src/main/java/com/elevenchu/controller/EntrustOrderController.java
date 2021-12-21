@@ -53,6 +53,17 @@ public class EntrustOrderController {
         return R.ok(pageData) ;
     }
 
+    @GetMapping("/{symbol}")
+    @ApiOperation(value = "查询未完成的委托单记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current",value = "当前页") ,
+            @ApiImplicitParam(name = "size",value = "条数") ,
+    })
+    public R<Page<TradeEntrustOrderVo>> entrustOrders(@ApiIgnore Page<EntrustOrder> page , @PathVariable("symbol") String symbol){
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString()) ;
+        Page<TradeEntrustOrderVo> pageData = entrustOrderService.getEntrustOrder(page,symbol,userId) ;
+        return R.ok(pageData) ;
+    }
 
 
 

@@ -63,6 +63,33 @@ public class EntrustOrderServiceImpl extends ServiceImpl<EntrustOrderMapper, Ent
         return tradeEntrustOrderVoPage;
     }
 
+    /**
+     * 未完成的委托单
+     * @param page
+     * @param symbol
+     * @param userId
+     * @return
+     */
+
+    @Override
+    public Page<TradeEntrustOrderVo> getEntrustOrder(Page<EntrustOrder> page, String symbol, Long userId) {
+        // 该用户对该交易对的交易记录
+        Page<EntrustOrder> entrustOrderPage = page(page, new LambdaQueryWrapper<EntrustOrder>()
+                .eq(EntrustOrder::getUserId, userId)
+                .eq(EntrustOrder::getSymbol, symbol)
+                .eq(EntrustOrder::getStatus, 0) // 查询未完成
+        );
+        Page<TradeEntrustOrderVo> tradeEntrustOrderVoPage = new Page<>(page.getCurrent(), page.getSize());
+        List<EntrustOrder> entrustOrders = entrustOrderPage.getRecords();
+        if (CollectionUtils.isEmpty(entrustOrders)) {
+            tradeEntrustOrderVoPage.setRecords(Collections.emptyList());
+        } else {
+            List<TradeEntrustOrderVo> tradeEntrustOrderVos = entrustOrders2tradeEntrustOrderVos(entrustOrders);
+            tradeEntrustOrderVoPage.setRecords(tradeEntrustOrderVos);
+        }
+        return tradeEntrustOrderVoPage;
+    }
+
     private List<TradeEntrustOrderVo> entrustOrders2tradeEntrustOrderVos(List<EntrustOrder> entrustOrders) {
         List<TradeEntrustOrderVo> tradeEntrustOrderVos = new ArrayList<>(entrustOrders.size());
         for (EntrustOrder entrustOrder : entrustOrders) {

@@ -11,4 +11,6 @@ public interface EntrustOrderService extends IService<EntrustOrder>{
     Page<EntrustOrder> findByPage(Page<EntrustOrder> page, Long userId, String symbol, Integer type);
 
     Page<TradeEntrustOrderVo> getHistoryEntrustOrder(Page<EntrustOrder> page, String symbol, Long userId);
+
+    Page<TradeEntrustOrderVo> getEntrustOrder(Page<EntrustOrder> page, String symbol, Long userId);
 }
