@@ -3,6 +3,7 @@ package com.elevenchu.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.elevenchu.domain.EntrustOrder;
 import com.elevenchu.model.R;
+import com.elevenchu.param.OrderParam;
 import com.elevenchu.service.EntrustOrderService;
 import com.elevenchu.vo.TradeEntrustOrderVo;
 import io.swagger.annotations.Api;
@@ -11,10 +12,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
@@ -64,7 +62,16 @@ public class EntrustOrderController {
         Page<TradeEntrustOrderVo> pageData = entrustOrderService.getEntrustOrder(page,symbol,userId) ;
         return R.ok(pageData) ;
     }
-
+    @PostMapping
+    @ApiOperation(value = "委托单的下单操作")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "orderParam",value = "orderParam json数据")
+    })
+    public R createEntrustOrder(@RequestBody OrderParam orderParam){
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString()) ;
+        Boolean isOk = entrustOrderService.createEntrustOrder(userId,orderParam) ;
+        return isOk ? R.ok() :R.fail("创建失败") ;
+    }
 
 
 }

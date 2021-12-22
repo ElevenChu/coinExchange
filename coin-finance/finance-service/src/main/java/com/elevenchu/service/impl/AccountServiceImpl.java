@@ -12,6 +12,7 @@ import com.elevenchu.service.CoinService;
 import com.elevenchu.service.ConfigService;
 import com.elevenchu.vo.AccountVo;
 import com.elevenchu.vo.UserTotalAccountVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -27,6 +28,7 @@ import com.elevenchu.service.AccountService;
 import org.springframework.util.CollectionUtils;
 
 @Service
+@Slf4j
 public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> implements AccountService{
 
     @Autowired
