@@ -1,5 +1,6 @@
 package com.elevenchu.match;
 
+import com.elevenchu.disruptor.OrderEvent;
 import com.elevenchu.disruptor.OrderEventHandler;
 import com.elevenchu.model.OrderBooks;
 import com.lmax.disruptor.EventHandler;
@@ -26,10 +27,10 @@ public class MatchEngineAutoConfiguration {
      */
 
    @Bean("eventHandlers")
-    public EventHandler[] eventHandlers(){
+    public EventHandler<OrderEvent>[] eventHandlers(){
        Map<String, MatchEngineProperties.CoinScale> symbols = matchEngineProperties.getSymbols();
        Set<Map.Entry<String, MatchEngineProperties.CoinScale>> entries = symbols.entrySet();
-       EventHandler[] eventHandlers = new EventHandler[symbols.size()];
+       EventHandler<OrderEvent>[] eventHandlers = new EventHandler[symbols.size()];
        for (Map.Entry<String, MatchEngineProperties.CoinScale> entry : entries) {
            String symbol = entry.getKey();
            MatchEngineProperties.CoinScale value = entry.getValue();
