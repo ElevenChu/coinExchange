@@ -89,7 +89,7 @@ public class Order implements Serializable {
 //    /**
 //     * 已经成功的水平订单
 //     */
-  private List<OrderDetail> details;
+  //private List<OrderDetail> details;
 
 
     /**
