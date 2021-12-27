@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/tradeAreas")
 @Api(tags = "交易区域的数据接口")
 public class TradeAreaController {
-    @Autowired
+
     private TradeAreaService tradeAreaService;
 
     @GetMapping

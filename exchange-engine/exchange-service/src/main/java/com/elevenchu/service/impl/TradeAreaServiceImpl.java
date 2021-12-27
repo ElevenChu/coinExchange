@@ -37,7 +37,7 @@ public class TradeAreaServiceImpl extends ServiceImpl<TradeAreaMapper, TradeArea
     @Autowired
     private MarketService marketService;
 
-    @Resource
+
     private CoinServiceFeign coinServiceFeign;
 
     @Autowired

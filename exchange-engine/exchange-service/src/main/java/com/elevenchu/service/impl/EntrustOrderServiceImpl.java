@@ -2,15 +2,17 @@ package com.elevenchu.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.elevenchu.config.rocket.Source;
 import com.elevenchu.domain.Market;
 import com.elevenchu.domain.TurnoverOrder;
 import com.elevenchu.param.OrderParam;
 import com.elevenchu.service.MarketService;
 import com.elevenchu.service.TurnoverOrderService;
 import com.elevenchu.vo.TradeEntrustOrderVo;
-import com.mysql.cj.MessageBuilder;
 import feign.AccountServiceFeign;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -36,8 +38,11 @@ public class EntrustOrderServiceImpl extends ServiceImpl<EntrustOrderMapper, Ent
     @Autowired
     private TurnoverOrderService turnoverOrderService;
 
-    @Resource
+
     private AccountServiceFeign accountServiceFeign;
+
+    @Autowired
+    private Source source;
 
 
     @Override
@@ -178,9 +183,8 @@ public class EntrustOrderServiceImpl extends ServiceImpl<EntrustOrderMapper, Ent
                 accountServiceFeign.lockUserAmount(userId, coinId, entrustOrder.getFreeze(), "trade_create", entrustOrder.getId(), fee);
             }
             // 发送到撮合系统里面
-           // MessageBuilder<EntrustOrder> entrustOrderMessageBuilder = MessageBuilder.withPayload(entrustOrder).setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON);
-
-           // source.outputMessage().send(entrustOrderMessageBuilder.build());
+            MessageBuilder<EntrustOrder> entrustOrderMessageBuilder = MessageBuilder.withPayload(entrustOrder).setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON);
+            source.outputMessage().send(entrustOrderMessageBuilder.build());
         }
         return save;
     }
