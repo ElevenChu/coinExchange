@@ -184,6 +184,7 @@ public class EntrustOrderServiceImpl extends ServiceImpl<EntrustOrderMapper, Ent
             }
             // 发送到撮合系统里面
             MessageBuilder<EntrustOrder> entrustOrderMessageBuilder = MessageBuilder.withPayload(entrustOrder).setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON);
+
             source.outputMessage().send(entrustOrderMessageBuilder.build());
         }
         return save;
