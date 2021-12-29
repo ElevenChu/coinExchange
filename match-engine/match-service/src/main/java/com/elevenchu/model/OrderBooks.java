@@ -45,12 +45,12 @@ public class OrderBooks {
     /**
      * 买方的盘口数据
      */
-    // private TradePlate buyTradePlate;
+     private TradePlate buyTradePlate;
 
     /**
      * 卖方的盘口数据
      */
-    //private TradePlate sellTradePlate;
+    private TradePlate sellTradePlate;
 
     /**
      * 日期格式器
@@ -77,9 +77,9 @@ public class OrderBooks {
 
         sellLimitPrice = new TreeMap<>(Comparator.naturalOrder()); // 价格从小到大
 
-       // buyTradePlate = new TradePlate(symbol, OrderDirection.BUY);
+        buyTradePlate = new TradePlate(symbol, OrderDirection.BUY);
 
-       // sellTradePlate = new TradePlate(symbol, OrderDirection.SELL);
+        sellTradePlate = new TradePlate(symbol, OrderDirection.SELL);
 
         dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }
