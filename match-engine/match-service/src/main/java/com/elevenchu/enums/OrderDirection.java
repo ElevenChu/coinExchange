@@ -2,7 +2,6 @@ package com.elevenchu.enums;
 
 public enum OrderDirection {
 
-
     BUY(1,"买入") ,
     SELL(2,"卖出") ;
 

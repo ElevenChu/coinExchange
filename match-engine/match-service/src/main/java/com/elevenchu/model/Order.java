@@ -1,11 +1,12 @@
 package com.elevenchu.model;
 
+import com.elevenchu.enums.OrderDirection;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
+
 
 /**
  * 委托单
@@ -62,7 +63,7 @@ public class Order implements Serializable {
     /**
      * 订单的方向
      */
-    private Integer orderDirection;
+    private OrderDirection orderDirection;
 
     /**
      * 挂单的价格
@@ -89,7 +90,7 @@ public class Order implements Serializable {
 //    /**
 //     * 已经成功的水平订单
 //     */
-  //private List<OrderDetail> details;
+//    private List<OrderDetail> details;
 
 
     /**

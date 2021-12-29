@@ -109,7 +109,7 @@ public class OrderBooks {
      * 怎么添加一个订单进入我们的队列
      */
     public void addOrder(Order order) {
-        TreeMap<BigDecimal, MergeOrder> currentLimitPrices = getCurrentLimitPrices(OrderDirection.getOrderDirection(order.getOrderDirection()));
+        TreeMap<BigDecimal, MergeOrder> currentLimitPrices = getCurrentLimitPrices(order.getOrderDirection());
         MergeOrder mergeOrder = currentLimitPrices.get(order.getPrice());
         if(mergeOrder==null){
             mergeOrder=new MergeOrder();
@@ -122,7 +122,7 @@ public class OrderBooks {
      * 怎么取消一个订单
      */
     public void cancelOrder(Order order) {
-        TreeMap<BigDecimal, MergeOrder> currentLimitPrices = getCurrentLimitPrices(OrderDirection.getOrderDirection(order.getOrderDirection()));
+        TreeMap<BigDecimal, MergeOrder> currentLimitPrices = getCurrentLimitPrices(order.getOrderDirection());
         MergeOrder mergeOrder = currentLimitPrices.get(order.getPrice());
         if (mergeOrder == null) {
             return;
