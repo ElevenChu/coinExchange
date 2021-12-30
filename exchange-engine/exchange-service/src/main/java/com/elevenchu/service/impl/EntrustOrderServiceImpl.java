@@ -294,7 +294,20 @@ public class EntrustOrderServiceImpl extends ServiceImpl<EntrustOrderMapper, Ent
      * @param market
      */
     private void rollBackAccount(EntrustOrder sellOrder, EntrustOrder buyOrder, ExchangeTrade exchangeTrade, Market market) {
+        accountServiceFeign.transferBuyAmount(buyOrder.getUserId(),     // 买单用户ID
+                sellOrder.getUserId(),                          // 卖单用户ID
+                market.getBuyCoinId(),                           // 买单支付币种
+                exchangeTrade.getBuyTurnover(),                      // 买单成交金额
+                "币币交易",
+                Long.valueOf(exchangeTrade.getBuyOrderId()));
 
+        // 出售单需要
+        accountServiceFeign.transferSellAmount(sellOrder.getUserId(),    // 卖单用户ID
+                sellOrder.getUserId(),                           // 买单用户ID
+                market.getSellCoinId(),                          // 卖单支付币种
+                exchangeTrade.getSellTurnover(),                                      // 卖单成交数量
+                "币币交易",                        // 业务类型：币币交易撮合成交
+                Long.valueOf(exchangeTrade.getSellOrderId()));                         // 成交订单ID
 
 
     }

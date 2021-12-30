@@ -18,4 +18,8 @@ public interface AccountService extends IService<Account>{
     void lockUserAmount(Long userId, Long coinId, BigDecimal mum, String type, Long orderId, BigDecimal fee);
 
     UserTotalAccountVo getUserTotalAccount(Long userId);
+
+    void transferBuyAmount(Long fromUserId, Long toUserId, Long coinId, BigDecimal amount, String businessType, Long orderId);
+
+    void transferSellAmount(Long fromUserId, Long toUserId, Long coinId, BigDecimal amount, String businessType, Long orderId);
 }

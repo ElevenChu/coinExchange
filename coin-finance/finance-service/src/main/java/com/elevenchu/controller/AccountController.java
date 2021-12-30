@@ -49,12 +49,12 @@ public class AccountController implements AccountServiceFeign {
 
     @Override
     public void transferBuyAmount(Long fromUserId, Long toUserId, Long coinId, BigDecimal amount, String businessType, Long orderId) {
-
+        accountService.transferBuyAmount(fromUserId, toUserId, coinId, amount, businessType, orderId);
 
     }
 
     @Override
     public void transferSellAmount(Long fromUserId, Long toUserId, Long coinId, BigDecimal amount, String businessType, Long orderId) {
-
+        accountService.transferSellAmount(fromUserId, toUserId, coinId, amount, businessType, orderId);
     }
 }
