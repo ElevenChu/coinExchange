@@ -44,7 +44,7 @@ public class TurnoverOrder {
      */
     @TableField(value = "trade_type")
     @ApiModelProperty(value="交易类型:1 买 2卖")
-    private Boolean tradeType;
+    private Integer tradeType;
 
     /**
      * 交易对标识符
