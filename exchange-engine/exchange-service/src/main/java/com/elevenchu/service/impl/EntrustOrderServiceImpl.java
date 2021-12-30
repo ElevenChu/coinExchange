@@ -12,6 +12,7 @@ import com.elevenchu.service.TurnoverOrderService;
 import com.elevenchu.vo.TradeEntrustOrderVo;
 import feign.AccountServiceFeign;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
@@ -211,6 +212,30 @@ public class EntrustOrderServiceImpl extends ServiceImpl<EntrustOrderMapper, Ent
         // 3 余额的返还
         rollBackAccount(sellOrder, buyOrder, exchangeTrade, market);
 
+    }
+
+    @Override
+    public void cancleEntrustOrder(Long orderId) {
+    //取消委托单
+     //1.将该委托单从撮合引擎里面的委托单账本里面移除
+        EntrustOrder entrustOrder = new EntrustOrder();
+        entrustOrder.setStatus((byte)2);
+        entrustOrder.setId(orderId);
+        Message<EntrustOrder> message= MessageBuilder.withPayload(entrustOrder)
+                .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
+                .build();
+        source.outputMessage().send(message);
+    }
+
+    //2数据库里面委托单的取消
+    @Override
+    public void cancleEntrustOrderToDb(String orderId) {
+        if(StringUtils.hasText(orderId)){
+            Long orderIdVal = Long.valueOf(orderId);
+            EntrustOrder entrustOrder = getById(orderId);
+            entrustOrder.setStatus((byte)2);
+            updateById(entrustOrder);
+        }
     }
 
     /**

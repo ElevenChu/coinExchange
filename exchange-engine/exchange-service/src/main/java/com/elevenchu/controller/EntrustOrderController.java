@@ -73,6 +73,10 @@ public class EntrustOrderController {
         Boolean isOk = entrustOrderService.createEntrustOrder(userId,orderParam) ;
         return isOk ? R.ok() :R.fail("创建失败") ;
     }
-
+    @DeleteMapping("/{id}")
+    public R deleteEntrustOrder(@PathVariable("id") Long orderId){
+        entrustOrderService.cancleEntrustOrder(orderId) ;
+        return R.ok("取消成功") ;
+    }
 
 }

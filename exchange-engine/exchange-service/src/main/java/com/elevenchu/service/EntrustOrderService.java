@@ -19,4 +19,8 @@ public interface EntrustOrderService extends IService<EntrustOrder>{
     Boolean createEntrustOrder(Long userId, OrderParam orderParam);
 
     void doMatch(ExchangeTrade exchangeTrade);
+
+    void cancleEntrustOrder(Long orderId);
+
+    void cancleEntrustOrderToDb(String orderId);
 }
