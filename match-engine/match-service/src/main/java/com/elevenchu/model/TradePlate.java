@@ -1,7 +1,7 @@
 package com.elevenchu.model;
 
+import com.elevenchu.domain.DepthItemVo;
 import com.elevenchu.enums.OrderDirection;
-import com.elevenchu.vo.DepthItemVo;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -20,7 +20,7 @@ public class TradePlate {
         /**
          * 判断数据的详情
          */
-        private LinkedList<DepthItemVo> items=new LinkedList<>();
+        private LinkedList<com.elevenchu.domain.DepthItemVo> items=new LinkedList<>();
         /**
          * 最大支持的深度
          */
@@ -55,7 +55,7 @@ public class TradePlate {
         for (i = 0; i < items.size(); i++) {
             // 1 我们的sell 队列是: 从小到大
             // 2 我们的buy 队列是: 从大到小
-            DepthItemVo depthItemVo = items.get(i);
+            com.elevenchu.domain.DepthItemVo depthItemVo = items.get(i);
             if (
                     (direction == OrderDirection.BUY && order.getPrice().compareTo(depthItemVo.getPrice()) == -1)
                             ||
@@ -73,7 +73,7 @@ public class TradePlate {
         }
 
         if (i < maxDepth) {
-            DepthItemVo depthItemVo = new DepthItemVo();
+            com.elevenchu.domain.DepthItemVo depthItemVo = new com.elevenchu.domain.DepthItemVo();
             depthItemVo.setPrice(order.getPrice());
             depthItemVo.setVolume(order.getAmount().subtract(order.getTradedAmount()));
             items.add(i, depthItemVo);
@@ -97,7 +97,7 @@ public class TradePlate {
         if (order.getOrderDirection() != direction) {
             return;
         }
-        Iterator<DepthItemVo> iterator = items.iterator();
+        Iterator<com.elevenchu.domain.DepthItemVo> iterator = items.iterator();
         while (iterator.hasNext()) {
             DepthItemVo next = iterator.next();
             if (order.getPrice().compareTo(next.getPrice()) == 0) { // 价格相同

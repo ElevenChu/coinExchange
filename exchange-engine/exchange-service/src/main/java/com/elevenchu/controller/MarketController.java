@@ -5,6 +5,7 @@ import com.elevenchu.domain.Market;
 import com.elevenchu.domain.TurnoverOrder;
 import com.elevenchu.dto.MarketDto;
 import com.elevenchu.feign.MarketServiceFeign;
+import com.elevenchu.feign.OrderBooksFeignClient;
 import com.elevenchu.mappers.MarketDtoMappers;
 import com.elevenchu.model.R;
 import com.elevenchu.service.MarketService;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -32,6 +34,8 @@ public class MarketController implements MarketServiceFeign {
     private MarketService marketService;
     @Autowired
     private TurnoverOrderService turnoverOrderService;
+    @Autowired
+    private OrderBooksFeignClient orderBooksFeignClient;
 
 
 
@@ -116,18 +120,18 @@ public class MarketController implements MarketServiceFeign {
             @ApiImplicitParam(name = "symbol", value = "交易对"),
             @ApiImplicitParam(name = "dept", value = "深度类型"),
     })
-    public R<DepthsVo> findDeptVosSymbol(@PathVariable("symbol") String symbol, @PathVariable("dept") String dept) {
+    public R<DepthItemVo> findDeptVosSymbol(@PathVariable("symbol") String symbol, @PathVariable("dept") String dept) {
         // 交易市场
         Market market = marketService.getMarkerBySymbol(symbol);
 
-        DepthsVo depthsVo = new DepthsVo();
+        DepthItemVo depthsVo = new DepthItemVo();
         depthsVo.setCnyPrice(market.getOpenPrice()); // CNY的价格
         depthsVo.setPrice(market.getOpenPrice()); // GCN的价格
-//        Map<String, List<DepthItemVo>> depthMap = orderBooksFeignClient.querySymbolDepth(symbol);//TODO
-//        if (!CollectionUtils.isEmpty(depthMap)) {
-//            depthsVo.setAsks(depthMap.get("asks"));
-//            depthsVo.setBids(depthMap.get("bids"));
-//        }
+        Map<String, List<com.elevenchu.domain.DepthItemVo>> depthMap = orderBooksFeignClient.querySymbolDepth(symbol);
+        if (!CollectionUtils.isEmpty(depthMap)) {
+            depthsVo.setAsks(depthMap.get("asks"));
+           depthsVo.setBids(depthMap.get("bids"));
+      }
         return R.ok(depthsVo);
 
     }

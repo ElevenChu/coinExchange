@@ -57,6 +57,12 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-stream-binder-rocketmq</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.elevenchu</groupId>
+            <artifactId>match-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
