@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
  * 开启Stream的开发
  */
 @Configuration
-@EnableBinding(value = Sink.class)
+@EnableBinding(value = {Sink.class,Source.class})
 public class RocketStreamConfig {
 
 

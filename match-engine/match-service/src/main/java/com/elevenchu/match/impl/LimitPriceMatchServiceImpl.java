@@ -4,13 +4,16 @@ import com.elevenchu.enums.OrderDirection;
 import com.elevenchu.match.MatchService;
 import com.elevenchu.match.MatchServiceFactory;
 import com.elevenchu.match.MatchStrategy;
-import com.elevenchu.model.ExchangeTrade;
-import com.elevenchu.model.MergeOrder;
-import com.elevenchu.model.Order;
-import com.elevenchu.model.OrderBooks;
+import com.elevenchu.model.*;
+import com.elevenchu.rocket.Source;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.support.MessageBuilder;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MimeTypeUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -22,6 +25,10 @@ import java.util.Map;
 @Service
 @Slf4j
 public class LimitPriceMatchServiceImpl implements MatchService, InitializingBean {
+    @Autowired
+    private Source source;
+
+
     /**
      * 订单的撮合交易
      * @param orderBooks
@@ -31,6 +38,12 @@ public class LimitPriceMatchServiceImpl implements MatchService, InitializingBea
     @Override
     public void match(OrderBooks orderBooks, Order order)
     {
+        if (order.isCancelOrder()) {
+        orderBooks.cancelOrder(order);
+        Message<String> message = MessageBuilder.withPayload(order.getOrderId()).build();
+        source.cancelOrderOut().send(message);
+        return; // 取消单的操作
+    }
         //1.进行数据的校验
         if(order.getPrice().compareTo(BigDecimal.ZERO)<=0){
             return;
@@ -168,11 +181,35 @@ public class LimitPriceMatchServiceImpl implements MatchService, InitializingBea
     private BigDecimal calcTradeAmount(Order order) {
         return order.getAmount().subtract(order.getTradedAmount());
     }
+    /**
+     * 发送盘口数据,供以后我们前端的数据更新
+     *
+     * @param tradePlate
+     */
+    private void sendTradePlateData(TradePlate tradePlate) {
+        Message<TradePlate> message = MessageBuilder
+                .withPayload(tradePlate)
+                .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
+                .build();
+        source.plateOut().send(message);
+    }
 
+    //订单的完成
     private void completedOrders(List<Order> completedOrders) {
+        Message<List<Order>> message =
+                MessageBuilder.withPayload(completedOrders)
+                .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
+                .build();
+        source.completedOrdersOut().send(message);
+
     }
 
     private void handlerExchangeTrades(List<ExchangeTrade> exchangeTrades) {
+        Message<List<ExchangeTrade>> message = MessageBuilder
+                .withPayload(exchangeTrades)
+                .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
+                .build();
+        source.exchangeTradesOut().send(message);
     }
 
     @Override
