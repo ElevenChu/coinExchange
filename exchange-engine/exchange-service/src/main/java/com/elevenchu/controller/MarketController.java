@@ -112,6 +112,15 @@ public class MarketController implements MarketServiceFeign {
 
  }
 
+    @Override
+    public List<MarketDto> tradeMarkets() {
+        return null;
+    }
+
+    @Override
+    public String depthData(String symbol, int value) {
+        return null;
+    }
 
 
     @ApiOperation(value = "通过的交易对以及深度查询当前的市场的深度数据")
