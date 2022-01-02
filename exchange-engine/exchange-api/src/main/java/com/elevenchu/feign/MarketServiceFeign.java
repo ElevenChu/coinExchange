@@ -2,6 +2,7 @@ package com.elevenchu.feign;
 
 import com.elevenchu.config.feign.OAuth2FeignConfig;
 import com.elevenchu.dto.MarketDto;
+import com.elevenchu.dto.TradeMarketDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,4 +38,13 @@ public interface MarketServiceFeign {
      */
     @GetMapping("/depthData/{symbol}/{type}")
     String depthData(@PathVariable("symbol") String symbol,@PathVariable("type") int value);
+    /**
+     * 使用市场的ids 查询该市场的交易趋势
+     *
+     * @param marketIds
+     * @return
+     */
+    @GetMapping("/queryMarketsByIds")
+    List<TradeMarketDto> queryMarkesByIds(@RequestParam("marketIds") String marketIds);
+
 }
