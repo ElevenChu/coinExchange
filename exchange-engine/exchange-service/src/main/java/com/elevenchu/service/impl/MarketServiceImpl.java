@@ -62,6 +62,15 @@ public class MarketServiceImpl extends ServiceImpl<MarketMapper, Market> impleme
     }
 
     @Override
+    public List<MarketDto> queryAllMarkets() {
+        List<Market> list = list(new LambdaQueryWrapper<Market>().eq(Market::getStatus, 1));
+
+        return MarketDtoMappers.INSTANCE.toConvertDto(list);
+
+     
+    }
+
+    @Override
     public boolean save(Market entity) {
         @NotBlank Long sellCoinId = entity.getSellCoinId();//报价货币
         @NotNull Long buyCoinId = entity.getBuyCoinId(); // 基础货币

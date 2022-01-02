@@ -1,5 +1,6 @@
 package com.elevenchu.vo;
 
+import com.elevenchu.domain.DepthItemVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

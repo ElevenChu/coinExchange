@@ -1,16 +1,18 @@
 package com.elevenchu.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.elevenchu.domain.DepthItemVo;
 import com.elevenchu.domain.Market;
 import com.elevenchu.domain.TurnoverOrder;
 import com.elevenchu.dto.MarketDto;
+import com.elevenchu.dto.TradeMarketDto;
 import com.elevenchu.feign.MarketServiceFeign;
 import com.elevenchu.feign.OrderBooksFeignClient;
 import com.elevenchu.mappers.MarketDtoMappers;
 import com.elevenchu.model.R;
 import com.elevenchu.service.MarketService;
 import com.elevenchu.service.TurnoverOrderService;
-import com.elevenchu.vo.DepthItemVo;
 import com.elevenchu.vo.DepthsVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -111,14 +113,31 @@ public class MarketController implements MarketServiceFeign {
         return marketDto;
 
  }
-
+    /**
+     * 查询所有的交易市场
+     *
+     * @return
+     */
     @Override
     public List<MarketDto> tradeMarkets() {
-        return null;
+        return marketService.queryAllMarkets();
+    }
+    /**
+     * 查询该交易对下的盘口数据
+     *
+     * @param symbol
+     * @param value
+     * @return
+     */
+    @Override
+    public String depthData(String symbol, int value) {
+        R<DepthsVo> deptVosSymbol = findDeptVosSymbol(symbol, value + "");
+        DepthsVo data = deptVosSymbol.getData();
+        return JSON.toJSONString(data);
     }
 
     @Override
-    public String depthData(String symbol, int value) {
+    public List<TradeMarketDto> queryMarkesByIds(String marketIds) {
         return null;
     }
 
@@ -129,19 +148,20 @@ public class MarketController implements MarketServiceFeign {
             @ApiImplicitParam(name = "symbol", value = "交易对"),
             @ApiImplicitParam(name = "dept", value = "深度类型"),
     })
-    public R<DepthItemVo> findDeptVosSymbol(@PathVariable("symbol") String symbol, @PathVariable("dept") String dept) {
+    public R<DepthsVo> findDeptVosSymbol(@PathVariable("symbol") String symbol, @PathVariable("dept") String dept) {
         // 交易市场
         Market market = marketService.getMarkerBySymbol(symbol);
 
-        DepthItemVo depthsVo = new DepthItemVo();
+        DepthsVo depthsVo = new DepthsVo();
         depthsVo.setCnyPrice(market.getOpenPrice()); // CNY的价格
         depthsVo.setPrice(market.getOpenPrice()); // GCN的价格
-        Map<String, List<com.elevenchu.domain.DepthItemVo>> depthMap = orderBooksFeignClient.querySymbolDepth(symbol);
+        Map<String, List<DepthItemVo>> depthMap = orderBooksFeignClient.querySymbolDepth(symbol);
         if (!CollectionUtils.isEmpty(depthMap)) {
             depthsVo.setAsks(depthMap.get("asks"));
-           depthsVo.setBids(depthMap.get("bids"));
-      }
+            depthsVo.setBids(depthMap.get("bids"));
+        }
         return R.ok(depthsVo);
+
 
     }
 
