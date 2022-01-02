@@ -145,6 +145,12 @@ public class MarketController implements MarketServiceFeign {
     public String trades(String symbol) {
         return null;
     }
+    //TODO
+    @Override
+    public void refresh24hour(String symbol) {
+
+
+    }
 
 
     @ApiOperation(value = "通过的交易对以及深度查询当前的市场的深度数据")

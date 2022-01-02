@@ -60,14 +60,14 @@ public class MarketTickerTask {
     /**
      * 刷新24小时成交数据
      */
-//    @Scheduled(fixedRate = 1000)
-//    public void refresh24HDeal() {
-//        marketServiceFeign.tradeMarkets().forEach(market -> {
-//            if (market.getStatus() == 1) {
-//                marketServiceFeign.refresh24hour(market.getSymbol());
-//            }
-//        });
-//    }
+    @Scheduled(fixedRate = 1000)
+    public void refresh24HDeal() {
+        marketServiceFeign.tradeMarkets().forEach(market -> {
+            if (market.getStatus() == 1) {
+                marketServiceFeign.refresh24hour(market.getSymbol());
+            }
+        });
+    }
 
 
 

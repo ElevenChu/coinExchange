@@ -47,5 +47,26 @@ public interface MarketServiceFeign {
     @GetMapping("/queryMarketsByIds")
     List<TradeMarketDto> queryMarkesByIds(@RequestParam("marketIds") String marketIds);
 
-    String trades(String symbol);
+    /**
+     * 通过交易对查询所有的交易数据
+     *
+     * @param symbol
+     * @return
+     */
+    @GetMapping("/trades")
+    String trades(@RequestParam("symbol") String symbol);
+
+
+    /**
+     * 刷新24小时成交数据
+     *
+     * @param symbol 交易对
+     * @return
+     */
+    @GetMapping(value = "/refresh_24hour")
+    void refresh24hour(@RequestParam("symbol") String symbol);
+
+
+
+
 }
