@@ -47,4 +47,5 @@ public interface MarketServiceFeign {
     @GetMapping("/queryMarketsByIds")
     List<TradeMarketDto> queryMarkesByIds(@RequestParam("marketIds") String marketIds);
 
+    String trades(String symbol);
 }

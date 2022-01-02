@@ -141,6 +141,11 @@ public class MarketController implements MarketServiceFeign {
         return null;
     }
 
+    @Override
+    public String trades(String symbol) {
+        return null;
+    }
+
 
     @ApiOperation(value = "通过的交易对以及深度查询当前的市场的深度数据")
     @GetMapping("/depth/{symbol}/{dept}")
