@@ -49,9 +49,9 @@ public class TopicKLineTask {
                 // 自己的new 的对象
                 KlineEvent klineEvent = new KlineEvent(marketDto.getSymbol().toLowerCase(),"market.%s.kline.%s", Constants.REDIS_KEY_TRADE_KLINE);
                 // 注入一个值
-             //   klineEvent.setRedisTemplate(redisTemplate);
+                klineEvent.setRedisTemplate(redisTemplate);
                 // 注入一个值
-              //  klineEvent.setSource(source);
+               klineEvent.setSource(source);
                 executor.submit(klineEvent) ;
             }
         }

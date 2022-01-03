@@ -1,7 +1,9 @@
 package com.elevenchu.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.elevenchu.constant.Constants;
 import com.elevenchu.domain.DepthItemVo;
 import com.elevenchu.domain.Market;
 import com.elevenchu.domain.TurnoverOrder;
@@ -19,11 +21,13 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +42,8 @@ public class MarketController implements MarketServiceFeign {
     private TurnoverOrderService turnoverOrderService;
     @Autowired
     private OrderBooksFeignClient orderBooksFeignClient;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
 
 
@@ -184,6 +190,36 @@ public class MarketController implements MarketServiceFeign {
         return R.ok(turnoverOrders);
     }
 
+    /**
+     * K 线的查询
+     *
+     * @param symbol 交易对
+     * @param type   K 线类型
+     * @return
+     */
+    @ApiImplicitParams(
+            {@ApiImplicitParam(name = "symbol" ,value = "交易对"),
+                    @ApiImplicitParam(name = "type" ,value = "k线类型")}
+    )
+    @GetMapping("/kline/{symbol}/{type}")
+    public R<List<JSONArray>> queryKLine(@PathVariable("symbol") String symbol, @PathVariable("type") String type) {
+        // 我们的K 线放在Redis 里面
+        String redisKey = new StringBuilder(Constants.REDIS_KEY_TRADE_KLINE).append(symbol.toLowerCase()).append(":").append(type).toString();
+        List<String> klines = redisTemplate.opsForList().range(redisKey, 0, Constants.REDIS_MAX_CACHE_KLINE_SIZE - 1);
+        List<JSONArray> result =  new ArrayList<>(klines.size()) ;
+
+        if (!CollectionUtils.isEmpty(klines)) {
+            for (String kline : klines) {
+                // 先把字符串转化为json的数组
+                JSONArray objects = JSON.parseArray(kline);
+                // 这样前端获取到的就是数字类型
+                result.add(objects) ;
+            }
+            return R.ok(result);
+        }
+
+        return null;
+    }
 
 
 }

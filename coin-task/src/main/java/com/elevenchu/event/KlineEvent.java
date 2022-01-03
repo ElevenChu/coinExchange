@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.elevenchu.RocketMqConfig.Source;
 import com.elevenchu.model.MessagePayload;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.MessageHeaders;
@@ -11,7 +13,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.MimeTypeUtils;
 
 import java.util.List;
-
+@Data
+@Slf4j
 public class KlineEvent implements Runnable,Event {
     /**
      * 交易对标识符
