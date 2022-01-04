@@ -3,7 +3,7 @@
 
  2022.1.3 1.0阶段初步完成
   
- 本项目是前后端分离的，我所完成的就是后端部分。
+ 本项目是前后端分离的，我所完成的就是后端部分。当然功能没有完全实现 比如sentinel流控、熔断，保护还没实现(个人练手项目 压根没多少流量
  
  主要应用技术有Spring Cloud Alibaba（Nacos，Sentinel，Seata）+OpenFeign + Spring Boot + jetCache + Log4j +Mybatis Plus  +Mysql+  RocketMQ + OAuth2、0 + Jwt + Redis +Lombook+ Maven + Hutool + Orika + Tio+ Swagger-ui + Mycat + Docker  + OSS+Alibaba SMS 并且部署在阿里云服务器上
 
