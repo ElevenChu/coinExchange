@@ -5,7 +5,7 @@
   
  本项目是前后端分离的，我所完成的就是后端部分。
  
- 主要应用技术有Spring Cloud Alibaba（Nacos，Sentinel，Seata）+OpenFeign + Spring Boot + Mybatis Plus  +Mysql+  RocketMQ + OAuth2、0 + Jwt + Redis +Lombook+ Maven + Hutool + Orika + Tio+ Swagger-ui + Mycat + Docker  + OSS+Alibaba SMS 并且部署在阿里云服务器上
+ 主要应用技术有Spring Cloud Alibaba（Nacos，Sentinel，Seata）+OpenFeign + Spring Boot + jetCache + Log4j +Mybatis Plus  +Mysql+  RocketMQ + OAuth2、0 + Jwt + Redis +Lombook+ Maven + Hutool + Orika + Tio+ Swagger-ui + Mycat + Docker  + OSS+Alibaba SMS 并且部署在阿里云服务器上
 
  前后端分离，基于OAuth2.0 + JWT的API授权机制 
 
