@@ -5,7 +5,7 @@
   
  本项目是前后端分离的，我所完成的就是后端部分。当然功能没有完全实现 比如sentinel流控、熔断，保护还没实现(个人练手项目 压根没多少流量
  
- 主要应用技术有Spring Cloud Alibaba（Nacos，Sentinel，Seata）+OpenFeign + Spring Boot + jetCache + Log4j +Mybatis Plus  +Mysql+  RocketMQ + OAuth2、0 + Jwt + Redis +Lombook+ Maven + Hutool + Orika + Tio+ Swagger-ui + Mycat + Docker  + OSS+Alibaba SMS 并且部署在阿里云服务器上
+ 主要应用技术有Spring Cloud Alibaba（Nacos，Sentinel，Seata）+OpenFeign + Spring Boot + jetCache + Log4j（日志组件） +Mybatis Plus  +Mysql+  RocketMQ + OAuth2、0 + Jwt + Redis +Lombook+ Maven + Hutool + Orika + Tio（实时推送）+ Swagger2（接口测试框架） + Mycat + Docker  + OSS（云存储）+Alibaba SMS 并且部署在 阿里云服务器上
 
  前后端分离，基于OAuth2.0 + JWT的API授权机制 
 
@@ -28,6 +28,8 @@ Redis：分布式缓存数据库
 RabbitMQ:消息队列
 
 Disruptor:并发框架
+
+
 
 Nacos
 
