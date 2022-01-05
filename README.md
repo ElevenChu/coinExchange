@@ -23,6 +23,12 @@ Alibaba Cloud SMS: 覆盖全球的短信服务，友好、高效、智能的互�
 
 SpringBoot：作脚手架
 
+Redis：分布式缓存数据库
+
+RabbitMQ:消息队列
+
+Disruptor:并发框架
+
 Nacos
 
 ![image](https://user-images.githubusercontent.com/57619422/148035566-bcdc3bd8-9de2-4283-82f8-d10a4a2ead3c.png)
