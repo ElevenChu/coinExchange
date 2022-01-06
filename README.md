@@ -25,7 +25,7 @@ SpringBoot：作脚手架
 
 Redis：分布式缓存数据库
 
-RabbitMQ:消息队列
+RocketMQ:一款开源的分布式消息系统，基于高可用分布式集群技术，提供低延时的、高可靠的消息发布与订阅服务
 
 Disruptor:并发框架
 
